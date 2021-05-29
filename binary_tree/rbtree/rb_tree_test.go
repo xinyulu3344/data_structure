@@ -98,36 +98,22 @@ func TestInnerOrderTraversal(t *testing.T) {
 
 func TestRemove(t *testing.T) {
     data := make([]persion, 0)
-    for i := 0; i < 10000000; i++ {
+    for i := 0; i < 10; i++ {
         data = append(data, persion{name: "a" + strconv.Itoa(i), age: i})
     }
-    // data := []persion{
-    //     {name: "a", age: 55},
-    //     {name: "b", age: 87},
-    //     {name: "c", age: 56},
-    //     {name: "d", age: 74},
-    //     {name: "e", age: 96},
-    //     {name: "f", age: 22},
-    //     {name: "g", age: 62},
-    //     {name: "h", age: 20},
-    //     {name: "i", age: 70},
-    //     {name: "j", age: 68},
-    //     {name: "k", age: 90},
-    //     {name: "l", age: 50},
-    // }
     rbTree := NewRBTree()
     for i := 0; i < len(data); i++ {
         rbTree.Add(&data[i])
     }
-    // rbTree.InnerOrderTraversal(&myVistor{})
-    // fmt.Println()
+    rbTree.InnerOrderTraversal(&myVistor{stoppedElement: 100})
+    fmt.Println()
     for i := 0; i < len(data); i++ {
         rbTree.Remove(&data[i])
-        // rbTree.InnerOrderTraversal(&myVistor{})
-        // fmt.Println()
+        rbTree.InnerOrderTraversal(&myVistor{stoppedElement: 100})
+        fmt.Println()
     }
     fmt.Println("==========删除结束============")
-    // rbTree.InnerOrderTraversal(&myVistor{})
+    rbTree.InnerOrderTraversal(&myVistor{})
 }
 
 

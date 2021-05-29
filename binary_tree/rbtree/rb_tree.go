@@ -5,13 +5,12 @@
 **/
 package rbtree
 
-
 const red bool = false
 const black bool = true
 
 type Visitor interface {
     visit(e interface{}, color bool) // 操作遍历的数据
-    stop() bool          // 是否终止遍历
+    stop() bool                      // 是否终止遍历
 }
 
 type rbNode struct {
@@ -279,7 +278,6 @@ func (r *RBTree) compare(e1 interface{}, e2 interface{}) int {
     return e1.(Comparable).compareTo(e2.(Comparable))
 }
 
-
 // 删除节点
 func (r *RBTree) Remove(element interface{}) {
     // 如果节点的度为2
@@ -313,14 +311,14 @@ func (r *RBTree) remove(n *rbNode) {
         replacement.parent = n.parent
         if n.parent == nil { // n是度为1的节点并且是根节点
             r.root = replacement
-        } else if n == n.parent.left{
+        } else if n == n.parent.left {
             n.parent.left = replacement
         } else {
             n.parent.right = replacement
         }
         // 删除节点之后的处理
-        r.afterRemove(n, replacement)
-    } else if n.parent == nil{ // n是叶子节点并且是根节点
+        r.afterRemove(replacement)
+    } else if n.parent == nil { // n是叶子节点并且是根节点
         r.root = nil
         r.afterAdd(n)
     } else { // n是叶子节点并且不是根节点
@@ -329,23 +327,17 @@ func (r *RBTree) remove(n *rbNode) {
         } else {
             n.parent.right = nil
         }
-        r.afterRemove(n, replacement)
+        r.afterRemove(n)
     }
 }
 
 // 删除之后的处理
-// node: 被删除节点
-// replaceNode: 替换节点
-func (r *RBTree) afterRemove(node *rbNode, replaceNode *rbNode) {
+// node: 被删除节点 或者 用以取代被删除节点的子节点(当被删除节点的度为1)
+func (r *RBTree) afterRemove(node *rbNode) {
 
-    // 删除的节点是红色，不需要做任何处理
+    // 删除的节点是红色 或者 用以替代删除节点的子节点是红色
     if isRed(node) {
-        return
-    }
-
-    // 用以替代n的子节点是红色
-    if (isRed(replaceNode)) {
-        dyeBlack(replaceNode)
+        dyeBlack(node)
         return
     }
 
@@ -380,7 +372,7 @@ func (r *RBTree) afterRemove(node *rbNode, replaceNode *rbNode) {
             dyeBlack(node.parent)
             dyeRed(sibling)
             if parentIsBlack {
-                r.afterRemove(node.parent, nil)
+                r.afterRemove(node.parent)
             }
 
         } else { // 兄弟节点至少有一个红色子节点，向兄弟借
@@ -410,7 +402,7 @@ func (r *RBTree) afterRemove(node *rbNode, replaceNode *rbNode) {
             dyeBlack(node.parent)
             dyeRed(sibling)
             if parentIsBlack {
-                r.afterRemove(node.parent, nil)
+                r.afterRemove(node.parent)
             }
 
         } else { // 兄弟节点至少有一个红色子节点，向兄弟借
@@ -448,7 +440,6 @@ func (r *RBTree) getNodeByElement(element interface{}) *rbNode {
     }
     return nil
 }
-
 
 // 获取前驱结点
 func (r *RBTree) getPredecessor(n *rbNode) *rbNode {
@@ -493,7 +484,6 @@ func (r *RBTree) getSuccessor(n *rbNode) *rbNode {
     return n.parent
 }
 
-
 // 中序遍历
 func (r *RBTree) InnerOrderTraversal(visitor Visitor) {
     if visitor == nil {
@@ -513,4 +503,3 @@ func (r *RBTree) innerOrderTraversal(n *rbNode, visitor Visitor) {
     visitor.visit(n.element, n.color)
     r.innerOrderTraversal(n.right, visitor)
 }
-
