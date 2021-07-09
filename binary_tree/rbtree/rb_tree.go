@@ -9,8 +9,8 @@ const red bool = false
 const black bool = true
 
 type Visitor interface {
-    visit(e interface{}, color bool) // 操作遍历的数据
-    stop() bool                      // 是否终止遍历
+    Visit(e interface{}, color bool) // 操作遍历的数据
+    Stop() bool                      // 是否终止遍历
 }
 
 type rbNode struct {
@@ -84,6 +84,7 @@ func NewRBTreeWithComparator(comparator Comparator) *RBTree {
     }
 }
 
+
 // 给节点染色
 func dyeColor(node *rbNode, color bool) *rbNode {
     if node == nil {
@@ -120,6 +121,16 @@ func isBlack(node *rbNode) bool {
 // 判断节点是否是红色
 func isRed(node *rbNode) bool {
     return colorOf(node) == red
+}
+
+// 获取红黑树节点个数
+func (r *RBTree) GetSize() int {
+    return r.size
+}
+
+// 判断红黑树是不是空的
+func (r *RBTree) IsEmpty() bool {
+    return r.size == 0
 }
 
 // 添加元素
@@ -272,10 +283,10 @@ func (r *RBTree) elementNotNull(element interface{}) {
 func (r *RBTree) compare(e1 interface{}, e2 interface{}) int {
     // 如果比较器非空，表示外部有传入实现好的比较器
     if r.comparator != nil {
-        return r.comparator.compare(e1, e2)
+        return r.comparator.Compare(e1, e2)
     }
     // 如果没有传入比较器，默认元素本身实现了可比较的接口
-    return e1.(Comparable).compareTo(e2.(Comparable))
+    return e1.(Comparable).CompareTo(e2.(Comparable))
 }
 
 // 删除节点
@@ -421,6 +432,11 @@ func (r *RBTree) afterRemove(node *rbNode) {
 
 }
 
+// 判断是否包含某个元素
+func(r *RBTree) Contains(element interface{}) bool {
+    return r.getNodeByElement(element) != nil
+}
+
 // 根据元素找到节点
 func (r *RBTree) getNodeByElement(element interface{}) *rbNode {
     if element == nil {
@@ -493,13 +509,13 @@ func (r *RBTree) InnerOrderTraversal(visitor Visitor) {
 }
 
 func (r *RBTree) innerOrderTraversal(n *rbNode, visitor Visitor) {
-    if n == nil || visitor.stop() {
+    if n == nil || visitor.Stop() {
         return
     }
     r.innerOrderTraversal(n.left, visitor)
-    if visitor.stop() {
+    if visitor.Stop() {
         return
     }
-    visitor.visit(n.element, n.color)
+    visitor.Visit(n.element, n.color)
     r.innerOrderTraversal(n.right, visitor)
 }

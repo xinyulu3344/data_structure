@@ -9,20 +9,6 @@ import (
     "container/list"
 )
 
-type Visitor interface {
-    visit(e interface{}) // 操作遍历的数据
-    stop() bool                      // 是否终止遍历
-}
-
-type Set interface {
-    Size() int
-    IsEmpty() bool
-    Clear()
-    Contains(e interface{}) bool
-    Add(e interface{})
-    Remove(e interface{})
-    Traversal()
-}
 
 // 使用链表实现
 type ListSet struct {
@@ -59,7 +45,9 @@ func (lSet *ListSet) Contains(e interface{}) bool {
 }
 
 func (lSet *ListSet) Add(e interface{}) {
-    if lSet.Contains(e) { return }
+    if lSet.Contains(e) {
+        return
+    }
     lSet.ls.PushBack(e)
 }
 
@@ -71,7 +59,9 @@ func (lSet *ListSet) Remove(e interface{}) {
 }
 
 func (lSet *ListSet) traversal(f func(e interface{})) {
-    if f == nil { return }
+    if f == nil {
+        return
+    }
     size := lSet.Size()
     node := lSet.ls.Front()
     for i := 0; i < size; i++ {
@@ -84,13 +74,17 @@ func (lSet *ListSet) indexOf(e interface{}) int {
     if e == nil {
         node := lSet.ls.Front()
         for i := 0; i < lSet.Size(); i++ {
-            if node.Value == nil { return i }
+            if node.Value == nil {
+                return i
+            }
             node = node.Next()
         }
     } else {
         node := lSet.ls.Front()
         for i := 0; i < lSet.Size(); i++ {
-            if node.Value == e { return i }
+            if node.Value == e {
+                return i
+            }
             node = node.Next()
         }
     }

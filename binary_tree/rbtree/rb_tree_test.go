@@ -20,7 +20,7 @@ func NewPersion(name string, age int) *persion {
     }
 }
 
-func (p *persion) compareTo(e Comparable) int {
+func (p *persion) CompareTo(e Comparable) int {
     v, ok := e.(*persion)
     if !ok {
         panic("传入的值不是*persion类型!")
@@ -33,7 +33,7 @@ type myVistor struct {
     stopped bool
 }
 
-func (m *myVistor) visit(e interface{}, color bool) {
+func (m *myVistor) Visit(e interface{}, color bool) {
     element, ok := e.(*persion)
     if !ok {
         fmt.Println("断言错误")
@@ -49,7 +49,7 @@ func (m *myVistor) visit(e interface{}, color bool) {
     }
 }
 
-func (m *myVistor) stop() bool {
+func (m *myVistor) Stop() bool {
     return m.stopped
 }
 
@@ -58,7 +58,7 @@ type SearchVistor struct {
     stopped bool
 }
 
-func (s *SearchVistor) visit(e interface{}, color bool) {
+func (s *SearchVistor) Visit(e interface{}, color bool) {
     element, ok := e.(*persion)
     if !ok {
         panic("传入e的类型不是*persion")
@@ -70,7 +70,7 @@ func (s *SearchVistor) visit(e interface{}, color bool) {
     }
 }
 
-func (s *SearchVistor) stop() bool {
+func (s *SearchVistor) Stop() bool {
     return s.stopped
 }
 
