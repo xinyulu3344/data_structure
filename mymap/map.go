@@ -3,11 +3,11 @@
   @date: 2021/2/1 0:02
   @note: 
 **/
-package treemap
+package mymap
 
 type Visitor func(k, v interface{}) bool
 
-type TreeMap interface {
+type Map interface {
     GetSize() int
     IsEmpty() bool
     Clear()
@@ -17,4 +17,9 @@ type TreeMap interface {
     ContainsKey(k interface{}) bool
     ContainsValue(v interface{}) bool
     Traversal(visitor Visitor) bool
+}
+
+type TreeMap struct {
+    size int
+    m map[interface{}]interface{}
 }
