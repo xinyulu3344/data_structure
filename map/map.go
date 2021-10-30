@@ -7,7 +7,7 @@ package treemap
 
 type Visitor func(k, v interface{}) bool
 
-type TreeMap interface {
+type Map interface {
     GetSize() int
     IsEmpty() bool
     Clear()
