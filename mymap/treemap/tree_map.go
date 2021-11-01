@@ -1,5 +1,7 @@
 package treemap
 
+import "data_structure/mymap"
+
 type Node struct {
     key interface{}
     value interface{}
@@ -75,7 +77,7 @@ func (t TreeMap) ContainsValue(v interface{}) bool {
     panic("implement me")
 }
 
-func (t TreeMap) Traversal(visitor Visitor) bool {
+func (t TreeMap) Traversal(visitor mymap.Visitor) bool {
     panic("implement me")
 }
 
