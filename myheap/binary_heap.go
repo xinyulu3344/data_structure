@@ -1,5 +1,7 @@
 package myheap
 
+import "math"
+
 const default_capacity = 10
 
 type Comparator interface {
@@ -21,6 +23,23 @@ func NewBinaryHeap() *BinaryHeap {
         comparator: nil,
         elements: make([]interface{}, 0, default_capacity),
         size: 0,
+    }
+}
+
+// NewBinaryHeapHeapify 批量建堆
+func NewBinaryHeapHeapify(e []interface{}, cmp Comparator) *BinaryHeap {
+    if e == nil || len(e) == 0 {
+        bheap := NewBinaryHeapWithComparator(cmp)
+        return bheap
+    } else {
+        bheap := &BinaryHeap{
+            comparator: cmp,
+            elements: make([]interface{}, len(e), int(math.Max(float64(len(e)), float64(default_capacity)))),
+            size: len(e),
+        }
+        copy(bheap.elements, e)
+        bheap.heapify()
+        return bheap
     }
 }
 
@@ -65,9 +84,11 @@ func (b *BinaryHeap) Remove() interface{} {
     root := b.elements[0]
     b.elements[0] = b.elements[lastIndex]
     //b.elements[lastIndex] = nil
-    b.elements = b.elements[:b.size-1]
+    b.elements = b.elements[:b.size - 1]
     b.size--
-    b.siftDown(0)
+    if len(b.elements) > 0 {
+        b.siftDown(0)
+    }
     return root
 }
 
@@ -162,4 +183,16 @@ func (b *BinaryHeap) siftDown(index int) {
         index = childIndex
     }
     b.elements[index] = e
+}
+
+func (b *BinaryHeap) heapify() {
+    // 自上而下的上滤
+    //for i := 1; i < b.size; i++ {
+    //    b.siftUp(i)
+    //}
+    
+    // 自下而上的下滤
+    for i := (b.size >> 1) - 1; i >= 0; i-- {
+        b.siftDown(i)
+    }
 }
