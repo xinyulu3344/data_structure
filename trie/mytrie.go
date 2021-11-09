@@ -1,9 +1,20 @@
 package trie
 
 type Node struct {
+    parent   *Node
     children map[rune]*Node
+    character rune
     value    interface{}
     word     bool
+}
+
+func NewNode(parent *Node) *Node {
+    return &Node{
+        parent: parent,
+        children: nil,
+        value: nil,
+        word: false,
+    }
 }
 
 type MyTrie struct {
@@ -49,11 +60,7 @@ func (m *MyTrie) Add(key string, value interface{}) interface{} {
     m.keyCheck(key)
     
     if m.root == nil {
-        m.root = &Node{
-            children: make(map[rune]*Node),
-            value: nil,
-            word: false,
-        }
+        m.root = NewNode(nil)
     }
     
     node := m.root
@@ -72,7 +79,10 @@ func (m *MyTrie) Add(key string, value interface{}) interface{} {
             childNode = node.children[keyChar]
         }
         if childNode == nil {
-            childNode = &Node{}
+            childNode = &Node{
+                parent: node,
+            }
+            childNode.character = keyChar
             if emptyChildren {
                 node.children = make(map[rune]*Node)
             }
@@ -94,7 +104,36 @@ func (m *MyTrie) Add(key string, value interface{}) interface{} {
 }
 
 func (m *MyTrie) Remove(key string) interface{} {
-    panic("implement me")
+    // 找到最后一个节点
+    node := m.getNode(key)
+    // 如果不是单词结尾，不用做任何处理
+    if node == nil || !node.word {
+        return nil
+    }
+    m.size--
+    
+    oldValue := node.value
+    
+    // 如果还有子节点
+    if node.children != nil && len(node.children) != 0 {
+        node.word = false
+        node.value = nil
+        return oldValue
+    }
+    
+    // 没有子节点
+    var parent *Node
+    delete(node.parent.children, node.character)
+    for node.parent != nil{
+        parent = node.parent
+        delete(parent.children, node.character)
+        if len(parent.children) != 0 {
+            break
+        }
+        node = parent
+        parent = node.parent
+    }
+    return oldValue
 }
 
 func (m *MyTrie) StartWith(prefix string) bool {
