@@ -127,7 +127,7 @@ func (m *MyTrie) Remove(key string) interface{} {
     for node.parent != nil{
         parent = node.parent
         delete(parent.children, node.character)
-        if len(parent.children) != 0 {
+        if parent.word || len(parent.children) != 0 {
             break
         }
         node = parent
