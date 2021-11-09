@@ -6,13 +6,6 @@ type Node struct {
     word     bool
 }
 
-func (n *Node) getChildren() map[rune]*Node {
-    if n.children == nil {
-        n.children = make(map[rune]*Node)
-    }
-    return n.children
-}
-
 type MyTrie struct {
     size int
     root *Node
@@ -21,11 +14,7 @@ type MyTrie struct {
 func NewMyTrie() *MyTrie {
     return &MyTrie{
         size: 0,
-        root: &Node{
-            children: make(map[rune]*Node),
-            value: nil,
-            word: false,
-        },
+        root: nil,
     }
 }
 
@@ -39,15 +28,12 @@ func (m *MyTrie) IsEmpty() bool {
 
 func (m *MyTrie) Clear() {
     m.size = 0
-    n := m.root.getChildren()
-    for k := range n {
-        delete(n, k)
-    }
+    m.root = nil
 }
 
 func (m *MyTrie) Get(key string) interface{} {
     node := m.getNode(key)
-    if node != nil {
+    if node != nil && node.word {
         return node.value
     } else {
         return nil
@@ -55,11 +41,20 @@ func (m *MyTrie) Get(key string) interface{} {
 }
 
 func (m *MyTrie) Contains(key string) bool {
-    return m.getNode(key) != nil
+    node := m.getNode(key)
+    return node != nil && node.word
 }
 
 func (m *MyTrie) Add(key string, value interface{}) interface{} {
     m.keyCheck(key)
+    
+    if m.root == nil {
+        m.root = &Node{
+            children: make(map[rune]*Node),
+            value: nil,
+            word: false,
+        }
+    }
     
     node := m.root
     keyChars := []rune(key)
@@ -67,11 +62,23 @@ func (m *MyTrie) Add(key string, value interface{}) interface{} {
     
     for i := 0; i < length; i++ {
         keyChar := keyChars[i]
-        if _, ok := node.getChildren()[keyChar]; !ok {
-            childNode := &Node{}
-            node.getChildren()[keyChar] = childNode
+        
+        // 判断children是否为空
+        emptyChildren := node.children == nil
+        var childNode *Node
+        if emptyChildren {
+            childNode = nil
+        } else {
+            childNode = node.children[keyChar]
         }
-        node = node.getChildren()[keyChar]
+        if childNode == nil {
+            childNode = &Node{}
+            if emptyChildren {
+                node.children = make(map[rune]*Node)
+            }
+            node.children[keyChar] = childNode
+        }
+        node = childNode
     }
     if node.word { // 已经存在这个单词
         // 覆盖
@@ -91,21 +98,7 @@ func (m *MyTrie) Remove(key string) interface{} {
 }
 
 func (m *MyTrie) StartWith(prefix string) bool {
-    m.keyCheck(prefix)
-    
-    node := m.root
-    prefixChars := []rune(prefix)
-    length := len(prefixChars)
-    
-    for i := 0; i < length; i++ {
-        prefixChar := prefixChars[i]
-        if n, ok := node.getChildren()[prefixChar]; !ok {
-            return false
-        } else {
-            node = n
-        }
-    }
-    return true
+    return m.getNode(prefix) != nil
 }
 
 func (m *MyTrie) getNode(key string) *Node {
@@ -113,21 +106,18 @@ func (m *MyTrie) getNode(key string) *Node {
         return nil
     }
     m.keyCheck(key)
+    
     node := m.root
     keyChars := []rune(key)
     length := len(keyChars)
     for i := 0; i < length; i++ {
-        keyChar := keyChars[i]
-        if n, ok := node.getChildren()[keyChar]; !ok {
+        if node == nil || node.children == nil || len(node.children) == 0 {
             return nil
-        } else {
-            node = n
         }
+        keyChar := keyChars[i]
+        node = node.children[keyChar]
     }
-    if node.word {
-        return node
-    }
-    return nil
+    return node
 }
 
 func (m *MyTrie) keyCheck(key string) {
