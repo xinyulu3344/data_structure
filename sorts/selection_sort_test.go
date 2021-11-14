@@ -1,4 +1,4 @@
-package selection_sort
+package sorts
 
 import (
     "data_structure/sorts/utils"
@@ -12,7 +12,8 @@ func TestSelectionSortInt(t *testing.T) {
     t.Log(randInts)
     t.Log(utils.IsAsSortedInts(randInts))
     
-    SelectionSortInt(randInts)
+    ss := NewSelectionSort()
+    ss.AsSortInt(randInts)
     
     t.Log(randInts)
     t.Log(utils.IsAsSortedInts(randInts))
@@ -20,17 +21,10 @@ func TestSelectionSortInt(t *testing.T) {
 
 
 func BenchmarkSelectionSortInt(b *testing.B) {
+    ss := NewSelectionSort()
     for i := 0; i < b.N; i++ {
         randInts := rand.Perm(10000)
-        SelectionSortInt(randInts)
+        ss.AsSortInt(randInts)
     }
-/*
-   goos: darwin
-   goarch: arm64
-   pkg: data_structure/sorts/selection_sort
-   BenchmarkSelectionSortInt
-   BenchmarkSelectionSortInt-8   	      36	  32255755 ns/op
-   PASS
-*/
 }
 

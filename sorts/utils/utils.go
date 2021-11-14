@@ -1,6 +1,5 @@
 package utils
 
-
 // 判断数组是否升序
 func IsAsSortedInts(elements []int) bool {
     length := len(elements)
