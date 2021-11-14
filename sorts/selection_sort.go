@@ -17,8 +17,7 @@ type SelectionSort struct {
 }
 
 func NewSelectionSort() *SelectionSort {
-    return &SelectionSort{
-    }
+    return &SelectionSort{}
 }
 
 func NewSelectionSortWithComparator(cmp Comparator) *SelectionSort {
@@ -28,13 +27,15 @@ func NewSelectionSortWithComparator(cmp Comparator) *SelectionSort {
 }
 
 func (s *SelectionSort) AsSortInt(elements []int) {
+    s.cmpCount = 0
+    s.swapCount = 0
     s.elementsInt = elements
     length := len(s.elementsInt)
     for end := length - 1; end > 0; end-- {
         maxIndex := 0
         // 找出最大值
         for begin := 1; begin <= end; begin++ {
-            if s.cmpInt(maxIndex, begin) <= 0 {
+            if s.compareInt(maxIndex, begin) <= 0 {
                 maxIndex = begin
             }
         }
@@ -43,12 +44,48 @@ func (s *SelectionSort) AsSortInt(elements []int) {
     }
 }
 
+func (s *SelectionSort) AsSort(elements []interface{}) {
+    s.cmpCount = 0
+    s.swapCount = 0
+    s.elements = elements
+    length := len(s.elements)
+    for end := length - 1; end > 0; end-- {
+        maxIndex := 0
+        // 找出最大值
+        for begin := 1; begin <= end; begin++ {
+            if s.compare(maxIndex, begin) <= 0 {
+                maxIndex = begin
+            }
+        }
+        // 交换
+        s.swap(maxIndex, end)
+    }
+    
+}
+
 func (s *SelectionSort) swapInt(index1, index2 int) {
+    s.swapCount++
     tmp := s.elementsInt[index1]
     s.elementsInt[index1] = s.elementsInt[index2]
     s.elementsInt[index2] = tmp
 }
 
-func (s *SelectionSort) cmpInt(index1, index2 int) int {
+func (s *SelectionSort) swap(index1, index2 int) {
+    s.swapCount++
+    tmp := s.elements[index1]
+    s.elements[index1] = s.elements[index2]
+    s.elements[index2] = tmp
+}
+
+func (s *SelectionSort) compareInt(index1, index2 int) int {
+    s.cmpCount++
     return s.elementsInt[index1] - s.elementsInt[index2]
+}
+
+func (s *SelectionSort) compare(index1, index2 int) int {
+    s.cmpCount++
+    if s.cmp != nil {
+        return s.cmp.CompareTo(s.elements[index1], s.elements[index2])
+    }
+    return s.elements[index1].(Comparable).Compare(s.elements[index2])
 }
