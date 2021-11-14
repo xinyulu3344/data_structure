@@ -25,6 +25,22 @@ func (is *InsertionSort) AsSortInt(elements []int) {
     length := len(elements)
     for begin := 1; begin < length; begin++ {
         cur := begin
+        v := is.elementsInt[cur]
+        for cur > 0 && is.compareElementsInt(v, is.elementsInt[cur - 1]) < 0 {
+            is.elementsInt[cur] = is.elementsInt[cur - 1]
+            cur--
+        }
+        is.elementsInt[cur] = v
+    }
+}
+
+func (is *InsertionSort) AsSortInt1(elements []int) {
+    is.cmpCount = 0
+    is.swapCount = 0
+    is.elementsInt = elements
+    length := len(elements)
+    for begin := 1; begin < length; begin++ {
+        cur := begin
         for cur > 0 && is.compareInt(cur, cur - 1) < 0 {
             is.swapInt(cur, cur - 1)
             cur--
@@ -33,6 +49,22 @@ func (is *InsertionSort) AsSortInt(elements []int) {
 }
 
 func (is *InsertionSort) AsSort(elements []interface{}) {
+    is.cmpCount = 0
+    is.swapCount = 0
+    is.elements = elements
+    length := len(elements)
+    for begin := 1; begin < length; begin++ {
+        cur := begin
+        v := is.elements[cur]
+        for cur > 0 && is.compareElements(v, is.elements[cur - 1]) < 0 {
+            is.elements[cur] = is.elements[cur - 1]
+            cur--
+        }
+        is.elements[cur] = v
+    }
+}
+
+func (is *InsertionSort) AsSort1(elements []interface{}) {
     is.cmpCount = 0
     is.swapCount = 0
     is.elements = elements
@@ -68,7 +100,20 @@ func (is *InsertionSort) compare(index1, index2 int) int {
     return is.elements[index1].(Comparable).Compare(is.elements[index2])
 }
 
+func (is *InsertionSort) compareElements(e1, e2 interface{}) int {
+    is.cmpCount++
+    if is.cmp != nil {
+        return is.cmp.CompareTo(e1, e2)
+    }
+    return e1.(Comparable).Compare(e2)
+}
+
 func (is *InsertionSort) compareInt(index1, index2 int) int {
     is.cmpCount++
     return is.elementsInt[index1] - is.elementsInt[index2]
+}
+
+func (is *InsertionSort) compareElementsInt(e1, e2 int) int {
+    is.cmpCount++
+    return e1 - e2
 }
