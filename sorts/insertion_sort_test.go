@@ -14,17 +14,34 @@ func TestInsertionSortAsSortInt(t *testing.T) {
     is.AsSortInt(randInts)
     
     t.Log(randInts)
+    t.Log("cmpCount: ", is.cmpCount)
+    t.Log("swapCount: ", is.swapCount)
     t.Log(utils.IsAsSortedInts(randInts))
 }
 
-func TestInsertionSortAsSortInt1(t *testing.T) {
+func TestInsertionSortAsSortIntMove(t *testing.T) {
     randInts := rand.Perm(10000)
     t.Log(randInts)
     
     is := NewInsertionSort()
-    is.AsSortInt1(randInts)
+    is.AsSortIntMove(randInts)
     
     t.Log(randInts)
+    t.Log("cmpCount: ", is.cmpCount)
+    t.Log("swapCount: ", is.swapCount)
+    t.Log(utils.IsAsSortedInts(randInts))
+}
+
+func TestInsertionSortAsSortIntSwap(t *testing.T) {
+    randInts := rand.Perm(10000)
+    t.Log(randInts)
+    
+    is := NewInsertionSort()
+    is.AsSortIntSwap(randInts)
+    
+    t.Log(randInts)
+    t.Log("cmpCount: ", is.cmpCount)
+    t.Log("swapCount: ", is.swapCount)
     t.Log(utils.IsAsSortedInts(randInts))
 }
 
@@ -36,8 +53,25 @@ func BenchmarkInsertionSortAsSortInt(b *testing.B) {
     }
 }
 
+func BenchmarkInsertionSortAsSortIntMove(b *testing.B) {
+    is := NewInsertionSort()
+    for i := 0; i < b.N; i++ {
+        randInts := rand.Perm(10000)
+        is.AsSortIntMove(randInts)
+    }
+}
+
+func BenchmarkInsertionSortAsSortIntSwap(b *testing.B) {
+    is := NewInsertionSort()
+    for i := 0; i < b.N; i++ {
+        randInts := rand.Perm(10000)
+        is.AsSortIntSwap(randInts)
+    }
+}
+
 func TestInsertionSortAsSort(t *testing.T) {
-    s1 := []interface{}{Integer(47), Integer(9), Integer(38), Integer(61), Integer(73), Integer(59), Integer(52), Integer(56), Integer(27), Integer(90)}
+    //s1 := []interface{}{Integer(47), Integer(9), Integer(38), Integer(61), Integer(73), Integer(59), Integer(52), Integer(56), Integer(27), Integer(90)}
+    s1 := getInterfaceRands(10000)
     t.Log(s1)
     is := NewInsertionSort()
     is.AsSort(s1)
@@ -46,14 +80,53 @@ func TestInsertionSortAsSort(t *testing.T) {
     t.Log("swapCount: ", is.swapCount)
 }
 
-func TestInsertionSortAsSort1(t *testing.T) {
-    s1 := []interface{}{Integer(47), Integer(9), Integer(38), Integer(61), Integer(73), Integer(59), Integer(52), Integer(56), Integer(27), Integer(90)}
+func BenchmarkInsertionSortAsSort(b *testing.B) {
+    is := NewInsertionSort()
+    for i := 0; i < b.N; i++ {
+        //s1 := []interface{}{Integer(47), Integer(9), Integer(38), Integer(61), Integer(73), Integer(59), Integer(52), Integer(56), Integer(27), Integer(90)}
+        s1 := getInterfaceRands(10000)
+        is.AsSort(s1)
+    }
+}
+
+func TestInsertionSortAsSortMove(t *testing.T) {
+    //s1 := []interface{}{Integer(47), Integer(9), Integer(38), Integer(61), Integer(73), Integer(59), Integer(52), Integer(56), Integer(27), Integer(90)}
+    s1 := getInterfaceRands(10000)
     t.Log(s1)
     is := NewInsertionSort()
-    is.AsSort1(s1)
+    is.AsSortMove(s1)
     t.Log(s1)
     t.Log("cmpCount: ", is.cmpCount)
     t.Log("swapCount: ", is.swapCount)
+}
+
+func BenchmarkInsertionSortAsSortMove(b *testing.B) {
+    is := NewInsertionSort()
+    for i := 0; i < b.N; i++ {
+        //s1 := []interface{}{Integer(47), Integer(9), Integer(38), Integer(61), Integer(73), Integer(59), Integer(52), Integer(56), Integer(27), Integer(90)}
+        s1 := getInterfaceRands(10000)
+        is.AsSortMove(s1)
+    }
+}
+
+func TestInsertionSortAsSortSwap(t *testing.T) {
+    //s1 := []interface{}{Integer(47), Integer(9), Integer(38), Integer(61), Integer(73), Integer(59), Integer(52), Integer(56), Integer(27), Integer(90)}
+    s1 := getInterfaceRands(10000)
+    t.Log(s1)
+    is := NewInsertionSort()
+    is.AsSortSwap(s1)
+    t.Log(s1)
+    t.Log("cmpCount: ", is.cmpCount)
+    t.Log("swapCount: ", is.swapCount)
+}
+
+func BenchmarkInsertionSortAsSortSwap(b *testing.B) {
+    is := NewInsertionSort()
+    for i := 0; i < b.N; i++ {
+        //s1 := []interface{}{Integer(47), Integer(9), Integer(38), Integer(61), Integer(73), Integer(59), Integer(52), Integer(56), Integer(27), Integer(90)}
+        s1 := getInterfaceRands(10000)
+        is.AsSortSwap(s1)
+    }
 }
 
 func TestNewInsertionSortWithComparator(t *testing.T) {
@@ -65,4 +138,16 @@ func TestNewInsertionSortWithComparator(t *testing.T) {
     t.Log(s1)
     t.Log("cmpCount: ", is.cmpCount)
     t.Log("swapCount: ", is.swapCount)
+}
+
+func getInterfaceRands(count int) []interface{} {
+    ints := make([]interface{}, count)
+    for i := 0; i < count; i++ {
+        ints[i] = Integer(rand.Intn(count))
+    }
+    return ints
+}
+
+func TestGetInterfaceRands(t *testing.T) {
+    t.Log(getInterfaceRands(10000))
 }
