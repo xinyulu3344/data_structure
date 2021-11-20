@@ -1,22 +1,45 @@
 package sorts
 
 import (
-    "data_structure/sorts/utils"
     "math/rand"
+    "strconv"
     "testing"
 )
 
-func TestBubbleSort(t *testing.T) {
-    s1 := []interface{}{Integer(47), Integer(9), Integer(38), Integer(61), Integer(73), Integer(59), Integer(52), Integer(56), Integer(27), Integer(90)}
+type Person struct {
+    name string
+    age int
+}
+
+type ByAge []Person
+
+func NewByAge(count int) ByAge {
+    persons := make(ByAge, count)
+    for i := 0; i < count; i++ {
+        persons[i] = Person{
+            name: "xinyulu" + strconv.Itoa(i),
+            age: rand.Intn(count),
+        }
+    }
+    return persons
+}
+func (b ByAge) Len() int { return len(b) }
+func (b ByAge) Compare(i, j int) int { return b[i].age - b[j].age }
+func (b ByAge) Swap(i, j int) { b[i], b[j] = b[j], b[i] }
+
+
+func TestBubbleAsSort(t *testing.T) {
+    s1 := NewByAge(10000)
     bs := NewBubbleSort()
     t.Log(s1)
     bs.AsSort(s1)
     t.Log(s1)
     t.Log("cmpCount: ", bs.cmpCount)
     t.Log("swapCount: ", bs.swapCount)
+    t.Log(IsAsSorted(s1))
 }
 
-func TestBubbleSortInt(t *testing.T) {
+func TestBubbleAsSortInt(t *testing.T) {
     randInts := rand.Perm(10000)
     t.Log(randInts)
     
@@ -25,10 +48,33 @@ func TestBubbleSortInt(t *testing.T) {
     t.Log(randInts)
     t.Log("cmpCount: ", bs.cmpCount)
     t.Log("swapCount: ", bs.swapCount)
-    t.Log(utils.IsAsSortedInts(randInts))
+    t.Log(IntsAreAsSorted(randInts))
 }
 
-func BenchmarkBubbleSortInt(b *testing.B) {
+func TestBubbleSortDsSort(t *testing.T) {
+    s1 := NewByAge(10000)
+    bs := NewBubbleSort()
+    t.Log(s1)
+    bs.DsSort(s1)
+    t.Log(s1)
+    t.Log("cmpCount: ", bs.cmpCount)
+    t.Log("swapCount: ", bs.swapCount)
+    t.Log(IsDsSorted(s1))
+}
+
+func TestBubbleSortDsSortInt(t *testing.T) {
+    randInts := rand.Perm(10000)
+    t.Log(randInts)
+    
+    bs := NewBubbleSort()
+    bs.DsSortInt(randInts)
+    t.Log(randInts)
+    t.Log("cmpCount: ", bs.cmpCount)
+    t.Log("swapCount: ", bs.swapCount)
+    t.Log(IntsAreDsSorted(randInts))
+}
+
+func BenchmarkBubbleAsSortInt(b *testing.B) {
     bs := NewBubbleSort()
     for i := 0; i < b.N; i++ {
         randInts := rand.Perm(10000)
@@ -36,19 +82,10 @@ func BenchmarkBubbleSortInt(b *testing.B) {
     }
 }
 
-func BenchmarkBubbleSort(b *testing.B) {
+func BenchmarkBubbleAsSort(b *testing.B) {
     bs := NewBubbleSort()
     for i := 0; i < b.N; i++ {
-        s1 := []interface{}{Integer(47), Integer(9), Integer(38), Integer(61), Integer(73), Integer(59), Integer(52), Integer(56), Integer(27), Integer(90)}
-        bs.AsSort(s1)
-    }
-}
-
-func BenchmarkBubbleSortWithComparator(b *testing.B) {
-    var intComparator *IntComparator
-    bs := NewBubbleSortWithComparator(intComparator)
-    for i := 0; i < b.N; i++ {
-        s1 := []interface{}{47, 9, 38, 61, 73, 59, 52, 56, 27, 90}
+        s1 := NewByAge(10000)
         bs.AsSort(s1)
     }
 }

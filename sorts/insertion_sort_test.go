@@ -1,7 +1,6 @@
 package sorts
 
 import (
-    "data_structure/sorts/utils"
     "math/rand"
     "testing"
 )
@@ -16,7 +15,7 @@ func TestInsertionSortAsSortInt(t *testing.T) {
     t.Log(randInts)
     t.Log("cmpCount: ", is.cmpCount)
     t.Log("swapCount: ", is.swapCount)
-    t.Log(utils.IsAsSortedInts(randInts))
+    t.Log(IsAsSortedInts(randInts))
 }
 
 func TestInsertionSortAsSortIntMove(t *testing.T) {
@@ -29,7 +28,7 @@ func TestInsertionSortAsSortIntMove(t *testing.T) {
     t.Log(randInts)
     t.Log("cmpCount: ", is.cmpCount)
     t.Log("swapCount: ", is.swapCount)
-    t.Log(utils.IsAsSortedInts(randInts))
+    t.Log(IsAsSortedInts(randInts))
 }
 
 func TestInsertionSortAsSortIntSwap(t *testing.T) {
@@ -42,7 +41,7 @@ func TestInsertionSortAsSortIntSwap(t *testing.T) {
     t.Log(randInts)
     t.Log("cmpCount: ", is.cmpCount)
     t.Log("swapCount: ", is.swapCount)
-    t.Log(utils.IsAsSortedInts(randInts))
+    t.Log(IsAsSortedInts(randInts))
 }
 
 func BenchmarkInsertionSortAsSortInt(b *testing.B) {

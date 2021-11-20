@@ -1,6 +1,5 @@
-package utils
+package sorts
 
-// 判断数组是否升序
 func IsAsSortedInts(elements []int) bool {
     length := len(elements)
     for end := length; end > 0; end-- {
@@ -18,9 +17,17 @@ func IsAsSortedInts(elements []int) bool {
     return true
 }
 
+func IntsAreAsSorted(elements []int) bool {
+    return IsAsSorted(IntSlice(elements))
+}
+
+func IntsAreDsSorted(elements []int) bool {
+    return IsDsSorted(IntSlice(elements))
+}
+
 
 // 判断数组是否降序
-func IsDesSortedInts(elements []int) bool {
+func AreDsSortedInts(elements []int) bool {
     length := len(elements)
     for end := length; end > 0; end-- {
         isSorted := true
@@ -76,4 +83,26 @@ func Search(elements []int, v int) int {
         }
     }
     return begin
+}
+
+// IsAsSorted reports whether data is sorted.
+func IsAsSorted(data Interface) bool {
+    n := data.Len()
+    for i := n - 1; i > 0; i-- {
+        if data.Compare(i, i-1) < 0 {
+            return false
+        }
+    }
+    return true
+}
+
+// IsDsSorted reports whether data is sorted.
+func IsDsSorted(data Interface) bool {
+    n := data.Len()
+    for i := n - 1; i > 0; i-- {
+        if data.Compare(i, i-1) > 0 {
+            return false
+        }
+    }
+    return true
 }

@@ -1,7 +1,6 @@
 package sorts
 
 import (
-    "data_structure/sorts/utils"
     "math/rand"
     "testing"
 )
@@ -9,13 +8,13 @@ import (
 func TestSelectionAsSortInt(t *testing.T) {
     randInts := rand.Perm(10000)
     t.Log(randInts)
-    t.Log(utils.IsAsSortedInts(randInts))
+    t.Log(IsAsSortedInts(randInts))
     
     ss := NewSelectionSort()
     ss.AsSortInt(randInts)
     
     t.Log(randInts)
-    t.Log(utils.IsAsSortedInts(randInts))
+    t.Log(IsAsSortedInts(randInts))
 }
 
 func BenchmarkSelectionSortInt(b *testing.B) {

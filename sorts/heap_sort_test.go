@@ -1,7 +1,6 @@
 package sorts
 
 import (
-    "data_structure/sorts/utils"
     "math/rand"
     "testing"
 )
@@ -17,7 +16,7 @@ func TestHeapSortAsSortInt(t *testing.T) {
     t.Log("cmpCount: ", hs.cmpCount)
     t.Log("swapCount: ", hs.swapCount)
     
-    t.Log(utils.IsAsSortedInts(randInts))
+    t.Log(IsAsSortedInts(randInts))
 }
 
 func BenchmarkHeapSortAsSort(b *testing.B) {
