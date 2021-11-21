@@ -16,12 +16,9 @@ package sorts
 type HeapSort struct {
     ascend bool
     heapSize int
-    //elements []interface{}
-    elementsInt []int
     elements Interface
     cmpCount int
     swapCount int
-    cmp Comparator
 }
 
 func NewHeapSort(ascend bool) *HeapSort {
@@ -189,7 +186,7 @@ func (h *HeapSort) Sort(elements Interface) {
     
     // Pop elements, largest first, into end of data.
     for i := h.heapSize - 1; i >= 0; i-- {
-        h.elements.Swap(0, i)
+        h.Swap(0, i)
         h.siftDown(0, i)
     }
 }
@@ -210,14 +207,14 @@ func (h *HeapSort) siftDown(lo, hi int) {
             if child >= hi {
                 break
             }
-            if child + 1 < hi && h.elements.Compare(child, child + 1) < 0 {
+            if child + 1 < hi && h.Compare(child, child + 1) < 0 {
                 child++
             }
         
-            if h.elements.Compare(root, child) >= 0 {
+            if h.Compare(root, child) >= 0 {
                 return
             }
-            h.elements.Swap(root, child)
+            h.Swap(root, child)
             root = child
         }
     } else {
@@ -227,14 +224,24 @@ func (h *HeapSort) siftDown(lo, hi int) {
                 break
             }
         
-            if child + 1 < hi && h.elements.Compare(child, child + 1) > 0 {
+            if child + 1 < hi && h.Compare(child, child + 1) > 0 {
                 child++
             }
-            if h.elements.Compare(root, child) < 0 {
+            if h.Compare(root, child) < 0 {
                 return
             }
-            h.elements.Swap(root, child)
+            h.Swap(root, child)
             root = child
         }
     }
+}
+
+func (h *HeapSort) Compare(i, j int) int {
+    h.cmpCount++
+    return h.elements.Compare(i, j)
+}
+
+func (h *HeapSort) Swap(i, j int) {
+    h.swapCount++
+    h.elements.Swap(i, j)
 }
