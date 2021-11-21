@@ -8,40 +8,51 @@ import (
 func TestSelectionAsSortInt(t *testing.T) {
     randInts := rand.Perm(10000)
     t.Log(randInts)
-    t.Log(IsAsSortedInts(randInts))
     
-    ss := NewSelectionSort()
-    ss.AsSortInt(randInts)
+    ss := NewSelectionSort(true)
+    ss.SortInt(randInts)
     
     t.Log(randInts)
-    t.Log(IsAsSortedInts(randInts))
+    t.Log(IntsAreAsSorted(randInts))
 }
 
-func BenchmarkSelectionSortInt(b *testing.B) {
-    ss := NewSelectionSort()
+func BenchmarkSelectionAsSortInt(b *testing.B) {
+    ss := NewSelectionSort(true)
     for i := 0; i < b.N; i++ {
         randInts := rand.Perm(10000)
-        ss.AsSortInt(randInts)
+        ss.SortInt(randInts)
     }
 }
 
-func TestNewSelectionAsSort(t *testing.T) {
-    s1 := []interface{}{Integer(47), Integer(9), Integer(38), Integer(61), Integer(73), Integer(59), Integer(52), Integer(56), Integer(27), Integer(90)}
-    ss := NewSelectionSort()
+func TestSelectionAsSort(t *testing.T) {
+    s1 := NewByAge(10000)
+    ss := NewSelectionSort(true)
     t.Log(s1)
-    ss.AsSort(s1)
+    ss.Sort(s1)
     t.Log(s1)
     t.Log("cmpCount: ", ss.cmpCount)
     t.Log("swapCount: ", ss.swapCount)
+    t.Log(IsAsSorted(s1))
 }
 
-func TestNewSelectionSortWithComparator(t *testing.T) {
-    s1 := []interface{}{47, 9, 38, 61, 73, 59, 52, 56, 27, 90}
-    var intComparator *IntComparator
-    ss := NewSelectionSortWithComparator(intComparator)
+func TestSelectionSortDsSortInt(t *testing.T) {
+    randInts := rand.Perm(10000)
+    t.Log(randInts)
+    
+    ss := NewSelectionSort(false)
+    ss.SortInt(randInts)
+    
+    t.Log(randInts)
+    t.Log(IntsAreDsSorted(randInts))
+}
+
+func TestSelectionSortDsSort(t *testing.T) {
+    s1 := NewByAge(10000)
+    ss := NewSelectionSort(false)
     t.Log(s1)
-    ss.AsSort(s1)
+    ss.Sort(s1)
     t.Log(s1)
     t.Log("cmpCount: ", ss.cmpCount)
     t.Log("swapCount: ", ss.swapCount)
+    t.Log(IsDsSorted(s1))
 }
