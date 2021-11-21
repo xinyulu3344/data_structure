@@ -186,9 +186,13 @@ func (h *HeapSort) Sort(elements Interface) {
     
     // Pop elements, largest first, into end of data.
     for i := h.heapSize - 1; i >= 0; i-- {
-        h.Swap(0, i)
+        h.swap(0, i)
         h.siftDown(0, i)
     }
+}
+
+func (h *HeapSort) SetAscend(ascend bool) {
+    h.ascend = ascend
 }
 
 func (h *HeapSort) heapify() {
@@ -207,14 +211,14 @@ func (h *HeapSort) siftDown(lo, hi int) {
             if child >= hi {
                 break
             }
-            if child + 1 < hi && h.Compare(child, child + 1) < 0 {
+            if child + 1 < hi && h.compare(child, child + 1) < 0 {
                 child++
             }
         
-            if h.Compare(root, child) >= 0 {
+            if h.compare(root, child) >= 0 {
                 return
             }
-            h.Swap(root, child)
+            h.swap(root, child)
             root = child
         }
     } else {
@@ -224,24 +228,24 @@ func (h *HeapSort) siftDown(lo, hi int) {
                 break
             }
         
-            if child + 1 < hi && h.Compare(child, child + 1) > 0 {
+            if child + 1 < hi && h.compare(child, child + 1) > 0 {
                 child++
             }
-            if h.Compare(root, child) < 0 {
+            if h.compare(root, child) < 0 {
                 return
             }
-            h.Swap(root, child)
+            h.swap(root, child)
             root = child
         }
     }
 }
 
-func (h *HeapSort) Compare(i, j int) int {
+func (h *HeapSort) compare(i, j int) int {
     h.cmpCount++
     return h.elements.Compare(i, j)
 }
 
-func (h *HeapSort) Swap(i, j int) {
+func (h *HeapSort) swap(i, j int) {
     h.swapCount++
     h.elements.Swap(i, j)
 }

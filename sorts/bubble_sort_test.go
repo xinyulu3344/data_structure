@@ -30,9 +30,9 @@ func (b ByAge) Swap(i, j int) { b[i], b[j] = b[j], b[i] }
 
 func TestBubbleAsSort(t *testing.T) {
     s1 := NewByAge(10000)
-    bs := NewBubbleSort()
+    bs := NewBubbleSort(true)
     t.Log(s1)
-    bs.AsSort(s1)
+    bs.Sort(s1)
     t.Log(s1)
     t.Log("cmpCount: ", bs.cmpCount)
     t.Log("swapCount: ", bs.swapCount)
@@ -43,8 +43,8 @@ func TestBubbleAsSortInt(t *testing.T) {
     randInts := rand.Perm(10000)
     t.Log(randInts)
     
-    bs := NewBubbleSort()
-    bs.AsSortInt(randInts)
+    bs := NewBubbleSort(true)
+    bs.SortInt(randInts)
     t.Log(randInts)
     t.Log("cmpCount: ", bs.cmpCount)
     t.Log("swapCount: ", bs.swapCount)
@@ -53,9 +53,9 @@ func TestBubbleAsSortInt(t *testing.T) {
 
 func TestBubbleSortDsSort(t *testing.T) {
     s1 := NewByAge(10000)
-    bs := NewBubbleSort()
+    bs := NewBubbleSort(false)
     t.Log(s1)
-    bs.DsSort(s1)
+    bs.Sort(s1)
     t.Log(s1)
     t.Log("cmpCount: ", bs.cmpCount)
     t.Log("swapCount: ", bs.swapCount)
@@ -66,8 +66,8 @@ func TestBubbleSortDsSortInt(t *testing.T) {
     randInts := rand.Perm(10000)
     t.Log(randInts)
     
-    bs := NewBubbleSort()
-    bs.DsSortInt(randInts)
+    bs := NewBubbleSort(false)
+    bs.SortInt(randInts)
     t.Log(randInts)
     t.Log("cmpCount: ", bs.cmpCount)
     t.Log("swapCount: ", bs.swapCount)
@@ -75,17 +75,17 @@ func TestBubbleSortDsSortInt(t *testing.T) {
 }
 
 func BenchmarkBubbleAsSortInt(b *testing.B) {
-    bs := NewBubbleSort()
+    bs := NewBubbleSort(true)
     for i := 0; i < b.N; i++ {
         randInts := rand.Perm(10000)
-        bs.AsSortInt(randInts)
+        bs.SortInt(randInts)
     }
 }
 
 func BenchmarkBubbleAsSort(b *testing.B) {
-    bs := NewBubbleSort()
+    bs := NewBubbleSort(true)
     for i := 0; i < b.N; i++ {
         s1 := NewByAge(10000)
-        bs.AsSort(s1)
+        bs.Sort(s1)
     }
 }

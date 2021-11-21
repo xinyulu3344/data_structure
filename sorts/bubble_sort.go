@@ -1,35 +1,32 @@
 package sorts
 
 type BubbleSort struct {
+    ascend bool
     cmpCount  int
     swapCount int
+    elements Interface
 }
 
-func NewBubbleSort() *BubbleSort {
-    return &BubbleSort{}
+func NewBubbleSort(ascend bool) *BubbleSort {
+    return &BubbleSort{
+        ascend: ascend,
+    }
 }
 
-func (b *BubbleSort) AsSortInt(elements []int) {
-    b.AsSort(IntSlice(elements))
+func (b *BubbleSort) SetAscend(ascend bool) {
+    b.ascend = ascend
 }
 
-func (b *BubbleSort) DsSortInt(elements []int) {
-    b.DsSort(IntSlice(elements))
+func (b *BubbleSort) SortInt(elements []int) {
+    b.Sort(IntSlice(elements))
 }
 
-func (b *BubbleSort) AsSort(elements Interface) {
-    b.Sort(elements, true)
-}
-
-func (b *BubbleSort) DsSort(elements Interface) {
-    b.Sort(elements, false)
-}
-
-func (b *BubbleSort) Sort(elements Interface, ascend bool) {
+func (b *BubbleSort) Sort(elements Interface) {
     b.cmpCount = 0
     b.swapCount = 0
+    b.elements = elements
     length := elements.Len()
-    if ascend {
+    if b.ascend {
         for end := length - 1; end > 0; end-- {
             //sorted := true
             sortedIndex := 1
@@ -70,4 +67,14 @@ func (b *BubbleSort) Sort(elements Interface, ascend bool) {
         }
         
     }
+}
+
+func (b *BubbleSort) compare(i, j int) int {
+    b.cmpCount++
+    return b.elements.Compare(i, j)
+}
+
+func (b *BubbleSort) swap(i, j int) {
+    b.swapCount++
+    b.elements.Swap(i, j)
 }
