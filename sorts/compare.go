@@ -21,6 +21,10 @@ func (i Integer) Compare(e interface{}) int {
     return int(i - e.(Integer))
 }
 
+func (i Integer) CompareTo(e1 interface{}, e2 interface{}) int {
+    return int(e1.(Integer) - e2.(Integer))
+}
+
 type Interface interface {
     Len() int
     Compare(i, j int) int
