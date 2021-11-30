@@ -32,10 +32,9 @@ func (b *BubbleSort) Sort(elements Interface) {
             sortedIndex := 1
             for begin := 1; begin <= end; begin++ {
                 b.cmpCount++
-                if elements.Compare(begin, begin-1) < 0 {
+                if b.compare(begin, begin-1) < 0 {
                     //b.swap(begin, begin - 1)
-                    b.swapCount++
-                    elements.Swap(begin, begin-1)
+                    b.swap(begin, begin-1)
                     //sorted = false
                     sortedIndex = begin
                 }
@@ -51,11 +50,9 @@ func (b *BubbleSort) Sort(elements Interface) {
             //sorted := true
             sortedIndex := 1
             for begin := 1; begin <= end; begin++ {
-                b.cmpCount++
-                if elements.Compare(begin, begin-1) > 0 {
+                if b.compare(begin, begin-1) > 0 {
                     //b.swap(begin, begin - 1)
-                    b.swapCount++
-                    elements.Swap(begin, begin-1)
+                    b.swap(begin, begin-1)
                     //sorted = false
                     sortedIndex = begin
                 }

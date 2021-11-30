@@ -12,7 +12,6 @@ type SelectionSort struct {
     //elements []interface{}
     ascend bool
     elements Interface
-    elementsInt []int
     cmpCount int
     swapCount int
 }

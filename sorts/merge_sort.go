@@ -1,8 +1,6 @@
 package sorts
 
 type MergeSort struct {
-    cmpCount  int
-    swapCount int
     cmp Comparator
     leftElements []interface{}
     elements  []interface{}
