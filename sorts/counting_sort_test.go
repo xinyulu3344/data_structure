@@ -24,10 +24,10 @@ func (mcs MyCountSort) GetNum() int {
 
 func TestCountingSort_SortInt(t *testing.T) {
     cs := NewCountingSort()
-    data := rand.Perm(100000000)
-    //t.Log(data)
+    data := rand.Perm(100000)
+    // t.Log(data)
     cs.SortInt(data)
-    //t.Log(data)
+    // t.Log(data)
     t.Log(IntsAreAsSorted(data))
 }
 

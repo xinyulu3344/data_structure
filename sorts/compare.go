@@ -36,3 +36,15 @@ type IntSlice []int
 func (is IntSlice) Len() int { return len(is) }
 func (is IntSlice) Compare(i, j int) int { return is[i] - is[j] }
 func (is IntSlice) Swap(i, j int) { is[i], is[j] = is[j], is[i] }
+
+
+type Element interface {
+    GetNum() int // 获取用来排序的整数值
+}
+
+type Elements []Element
+
+// 获取指定索引的元素
+func (e Elements) GetElement(index int) Element {
+    return e[index]
+}

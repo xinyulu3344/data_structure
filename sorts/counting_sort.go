@@ -9,15 +9,6 @@ func NewCountingSort() *CountingSort {
     return &CountingSort{}
 }
 
-type Element interface {
-    GetNum() int
-}
-
-type Elements []Element
-
-func (e Elements) GetElement(index int) Element {
-    return e[index]
-}
 
 // Sort
 // 支持对象排序
@@ -66,7 +57,7 @@ func (cs *CountingSort) Sort(elements Elements) {
 // 属于稳定排序
 func (cs *CountingSort) SortInt(elements []int) {
     cs.elementsInt = elements
-    length := len(cs.elements)
+    length := len(cs.elementsInt)
     max := cs.elementsInt[0]
     min := cs.elementsInt[0]
     // 找出最大、小值
