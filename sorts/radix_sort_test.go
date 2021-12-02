@@ -6,20 +6,34 @@ import (
     "testing"
 )
 
-type MyRadixSort struct {
+type MyElement struct {
 	name string
 	score int
 }
 
-func NewMyRadixSort(name string, score int) MyCountSort {
-	return MyCountSort{
+func NewMyElement(name string, score int) MyElement {
+	return MyElement{
 		name: name,
 		score: score,
 	}
 }
 
-func (mrs MyRadixSort) GetNum() int {
-	return mrs.score
+func (me MyElement) GetNum() int {
+	return me.score
+}
+
+type MyElements []MyElement
+
+func (me MyElements) Len() int {
+	return len(me)
+}
+
+func (me MyElements) GetElement(index int) Element {
+	return me[index]
+}
+
+func (me MyElements) SetElement(index int, element Element) {
+	me[index] = element.(MyElement)
 }
 
 func TestRadixSortInt(t *testing.T) {
@@ -31,9 +45,9 @@ func TestRadixSortInt(t *testing.T) {
 
 func TestRadixSort(t *testing.T) {
 	rs := NewRadixSort()
-	data := make(Elements, 10)
+	data := make(MyElements, 10)
 	for i := 0; i < 10; i++ {
-		data[i] = NewMyRadixSort("xinyulu" + strconv.Itoa(i), rand.Intn(10))
+		data[i] = NewMyElement("xinyulu" + strconv.Itoa(i), rand.Intn(10))
 	}
 	t.Log(data)
 	rs.Sort(data)

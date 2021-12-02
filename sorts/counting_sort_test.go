@@ -6,21 +6,6 @@ import (
 	"testing"
 )
 
-type MyCountSort struct {
-	name string
-	score int
-}
-
-func NewMyCountSort(name string, score int) MyCountSort {
-	return MyCountSort{
-		name: name,
-		score: score,
-	}
-}
-
-func (mcs MyCountSort) GetNum() int {
-	return mcs.score
-}
 
 func TestCountingSort_SortInt(t *testing.T) {
     cs := NewCountingSort()
@@ -33,9 +18,9 @@ func TestCountingSort_SortInt(t *testing.T) {
 
 func TestCountingSort_Sort(t *testing.T) {
 	cs := NewCountingSort()
-	data := make(Elements, 10)
+	data := make(MyElements, 10)
 	for i := 0; i < 10; i++ {
-		data[i] = NewMyCountSort("xinyulu" + strconv.Itoa(i), rand.Intn(10))
+		data[i] = NewMyElement("xinyulu" + strconv.Itoa(i), rand.Intn(10))
 	}
 	t.Log(data)
 	cs.Sort(data)

@@ -42,9 +42,29 @@ type Element interface {
     GetNum() int // 获取用来排序的整数值
 }
 
-type Elements []Element
+type Elements interface{
+    // 获取指定索引的元素
+	GetElement(index int) Element
+	SetElement(index int, element Element)
+	Len() int
+}
 
-// 获取指定索引的元素
-func (e Elements) GetElement(index int) Element {
-    return e[index]
+type ElementInt int
+
+func (ei ElementInt) GetNum() int {
+	return int(ei)
+}
+
+type ElementsInt []int
+
+func (ei ElementsInt) Len() int {
+	return len(ei)
+}
+
+func (ei ElementsInt) GetElement(index int) Element {
+	return ElementInt(ei[index])
+}
+
+func (ei ElementsInt) SetElement(index int, element Element) {
+	ei[index] = int(element.(ElementInt))
 }
