@@ -1,22 +1,12 @@
 package union_find
 
-type IUnionFind interface {
-    Find(v int) int
-    Union(v1, v2 int)
-    IsSame(v1, v2 int) bool
-}
-
 type UnionFindQF struct {
-    parents []int
+    *UnionFind
 }
 
 func NewUnionFindQF(capacity int) *UnionFindQF {
-    buf := make([]int, capacity)
-    for i := 0; i < capacity; i++ {
-        buf[i] = i
-    }
     return &UnionFindQF{
-        parents: buf,
+        NewUnionFind(capacity),
     }
 }
 
@@ -43,10 +33,4 @@ func (uf *UnionFindQF) Union(v1, v2 int) {
 // IsSame 检查v1、v2是否属于同一个集合
 func (uf *UnionFindQF) IsSame(v1, v2 int) bool {
     return uf.Find(v1) == uf.Find(v2)
-}
-
-func (uf *UnionFindQF) rangeCheck(v int) {
-    if v < 0 || v >= len(uf.parents) {
-        panic("v is out of bounds")
-    }
 }
