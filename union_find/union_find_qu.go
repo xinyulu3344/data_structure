@@ -33,3 +33,28 @@ func (qu *UnionFindQU) Union(v1, v2 int) {
 func (qu *UnionFindQU) IsSame(v1, v2 int) bool {
     return qu.Find(v1) == qu.Find(v2)
 }
+
+// UnionFindQUSize 基于size的优化
+type UnionFindQUSize struct {
+    *UnionFindQU
+    sizes []int
+}
+
+func NewUnionFindQUSize(capacity int) *UnionFindQUSize {
+    return &UnionFindQUSize{
+        UnionFindQU: NewUnionFindQU(capacity),
+        sizes: make([]int, capacity),
+    }
+}
+
+func (qus *UnionFindQUSize) Union(v1, v2 int) {
+    p1 := qus.Find(v1)
+    p2 := qus.Find(v2)
+    if qus.sizes[p1] < qus.sizes[p2] {
+        qus.parents[p1] = p2
+        qus.sizes[p2] += qus.sizes[p1]
+    } else {
+        qus.parents[p2] = p1
+        qus.sizes[p1] += qus.sizes[p2]
+    }
+}
