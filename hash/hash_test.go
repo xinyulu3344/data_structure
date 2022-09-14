@@ -1,4 +1,0 @@
-package hash
-
-func HashCode() {
-}
