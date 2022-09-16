@@ -29,4 +29,6 @@ func TestArrayList(t *testing.T) {
     al2.Append(Str("b"))
     al2.Append(Str("c"))
     fmt.Println(al2)
+	al2.Remove(3)
+    fmt.Println(al2)
 }

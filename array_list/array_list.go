@@ -82,7 +82,12 @@ func (al *ArrayList) Add(index int, e Item) {
 }
 
 func (al *ArrayList) Remove(index int) Item {
-    return nil
+	old := al.Get(index)
+	for i := index; i < al.size-1; i++ {
+		al.elements[i] = al.elements[i+1]
+	}
+	al.size--
+	return old
 }
 
 // IndexOf
