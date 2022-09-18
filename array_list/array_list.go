@@ -1,9 +1,11 @@
 package array_list
 
-import "fmt"
+import (
+    "fmt"
+)
 
 const (
-    DEFAULT_CAPACITY = 10
+    DEFAULT_CAPACITY  = 10
     ELEMENT_NOT_FOUND = -1
 )
 
@@ -24,8 +26,8 @@ type IArrayList interface {
     Clear()
 }
 
-type ArrayList struct{
-    size int // 元素数量
+type ArrayList struct {
+    size     int // 元素数量
     elements []Item
 }
 
@@ -34,8 +36,8 @@ func NewArrayListWithCap(capacity int) *ArrayList {
         capacity = DEFAULT_CAPACITY
     }
     return &ArrayList{
-        elements: make([]Item, 0, capacity),
-        size: 0,
+        elements: make([]Item, capacity),
+        size:     0,
     }
 }
 
@@ -58,43 +60,46 @@ func (al *ArrayList) Contains(e Item) bool {
 }
 
 func (al *ArrayList) Append(e Item) {
-    al.elements = append(al.elements, e)
-    al.size++
+    al.Add(al.size, e)
 }
 
 func (al *ArrayList) Get(index int) Item {
-    if index < 0 || index >= al.size {
-        panic(fmt.Sprintf("Index: %d Size: %d", index, al.size))
-    }
+    al.rangeCheck(index)
     return al.elements[index]
 }
 
 func (al *ArrayList) Set(index int, e Item) Item {
-    if index < 0 || index >= al.size {
-        panic(fmt.Sprintf("Index: %d Size: %d", index, al.size))
-    }
+    al.rangeCheck(index)
     old := al.elements[index]
     al.elements[index] = e
     return old
 }
 
 func (al *ArrayList) Add(index int, e Item) {
+    al.rangeCheckForAdd(index)
+    al.ensureCapacity(al.size + 1)
+    for i := al.size - 1; i >= index; i-- {
+        al.elements[i+1] = al.elements[i]
+    }
+    al.elements[index] = e
+    al.size++
 }
 
 func (al *ArrayList) Remove(index int) Item {
-	old := al.Get(index)
-	for i := index; i < al.size-1; i++ {
-		al.elements[i] = al.elements[i+1]
-	}
-	al.size--
-	return old
+    al.rangeCheck(index)
+    old := al.Get(index)
+    for i := index; i < al.size-1; i++ {
+        al.elements[i] = al.elements[i+1]
+    }
+    al.size--
+    return old
 }
 
 // IndexOf
 // 返回元素在数组中的索引，若不存在，则返回-1
 func (al *ArrayList) IndexOf(e Item) int {
-    for i, v := range al.elements {
-        if v.Equal(e) {
+    for i := 0; i < al.size; i++ {
+        if al.elements[i].Equal(e) {
             return i
         }
     }
@@ -104,6 +109,36 @@ func (al *ArrayList) IndexOf(e Item) int {
 func (al *ArrayList) Clear() {
     al.size = 0
     al.elements = al.elements[0:0]
+}
+
+func (al *ArrayList) ensureCapacity(capacity int) {
+    oldCapacity := len(al.elements)
+    if oldCapacity >= capacity {
+        return
+    }
+    // 新容量为旧容量的1.5倍
+    newCapacity := oldCapacity + (oldCapacity >> 1)
+    newElements := make([]Item, newCapacity)
+    for i := 0; i < al.size; i++ {
+        newElements[i] = al.elements[i]
+    }
+    al.elements = newElements
+}
+
+func (al *ArrayList) outOfBounds(index int) {
+    panic(fmt.Sprintf("Index: %d Size: %d", index, al.size))
+}
+
+func (al *ArrayList) rangeCheck(index int) {
+    if index < 0 || index >= al.size {
+        panic(fmt.Sprintf("Index: %d Size: %d", index, al.size))
+    }
+}
+
+func (al *ArrayList) rangeCheckForAdd(index int) {
+    if index < 0 || index > al.size {
+        panic(fmt.Sprintf("Index: %d Size: %d", index, al.size))
+    }
 }
 
 // [xx, xx, xx, xx]

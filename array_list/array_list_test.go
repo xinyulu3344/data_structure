@@ -1,9 +1,6 @@
 package array_list
 
-import (
-    "fmt"
-    "testing"
-)
+import "testing"
 
 type Int int
 
@@ -17,18 +14,17 @@ func (s Str) Equal(j Item) bool {
     return s == j.(Str)
 }
 
-func TestArrayList(t *testing.T) {
-    al := NewArrayListWithCap(10)
-    al.Append(Int(10))
-    al.Append(Int(12))
-    al.Append(Int(14))
-    fmt.Println(al)
-    
-    al2 := NewArrayListWithCap(10)
-    al2.Append(Str("a"))
-    al2.Append(Str("b"))
-    al2.Append(Str("c"))
-    fmt.Println(al2)
-	al2.Remove(3)
-    fmt.Println(al2)
+func TestArrayList_ensureCapacity(t *testing.T) {
+    al := NewArrayList()
+    capacity := len(al.elements)
+    for i := 0; i < 1000000; i++ {
+        al.Append(Int(i))
+        if capacity != len(al.elements) {
+            if len(al.elements) != (capacity + capacity>>1) {
+                t.Skip(capacity, len(al.elements))
+            }
+            capacity = len(al.elements)
+        }
+    }
+    t.Logf("当前容量: %d", capacity)
 }
