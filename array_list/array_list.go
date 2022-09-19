@@ -92,23 +92,34 @@ func (al *ArrayList) Remove(index int) Item {
         al.elements[i] = al.elements[i+1]
     }
     al.size--
+    al.elements[al.size] = nil
     return old
 }
 
 // IndexOf
 // 返回元素在数组中的索引，若不存在，则返回-1
 func (al *ArrayList) IndexOf(e Item) int {
-    for i := 0; i < al.size; i++ {
-        if al.elements[i].Equal(e) {
-            return i
+    if e == nil {
+        for i := 0; i < al.size; i++ {
+            if al.elements[i] == nil {
+                return i
+            }
+        }
+    } else {
+        for i := 0; i < al.size; i++ {
+            if e.Equal(al.elements[i]) {
+                return i
+            }
         }
     }
     return ELEMENT_NOT_FOUND
 }
 
 func (al *ArrayList) Clear() {
+    for i := 0; i < al.size; i++ {
+        al.elements[i] = nil
+    }
     al.size = 0
-    al.elements = al.elements[0:0]
 }
 
 func (al *ArrayList) ensureCapacity(capacity int) {
