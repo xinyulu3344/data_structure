@@ -78,8 +78,8 @@ func (al *ArrayList) Set(index int, e Item) Item {
 func (al *ArrayList) Add(index int, e Item) {
     al.rangeCheckForAdd(index)
     al.ensureCapacity(al.size + 1)
-    for i := al.size - 1; i >= index; i-- {
-        al.elements[i+1] = al.elements[i]
+    for i := al.size; i > index; i-- {
+        al.elements[i] = al.elements[i-1]
     }
     al.elements[index] = e
     al.size++

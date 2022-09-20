@@ -42,8 +42,29 @@ func TestArrayList_Append(t *testing.T) {
         al.Append(Int(i))
     }
     for i := 0; i < 18; i++ {
-        if !al.elements[i].(Int).Equal(Int(i)) {
+        if !al.elements[i].Equal(Int(i)) {
             t.Skipf("al.elements[%d] = %v != %v", i, al.elements[i], i)
+        }
+    }
+}
+
+func TestArrayList_Add(t *testing.T) {
+    al := NewArrayList()
+    for i := 0; i < 18; i++ {
+        al.Append(Int(i))
+    }
+    al.Add(3, Int(88))
+    if !al.elements[3].Equal(Int(88)) {
+        t.Errorf("al.element[3] = %v != 88", al.elements[3])
+    }
+    for i := 0; i < 3; i++ {
+        if !al.elements[i].Equal(Int(i)) {
+            t.Skipf("al.elements[%d] = %v != %d", i, al.elements[i], i)
+        }
+    }
+    for i := 4; i < 18; i++ {
+        if !al.elements[i].Equal(Int(i - 1)) {
+            t.Skipf("al.elements[%d] = %v != %d", i, al.elements[i], i-1)
         }
     }
 }
@@ -91,7 +112,6 @@ func TestArrayList_ensureCapacity2(t *testing.T) {
             capacity = len(al.elements)
         }
     }
-    t.Log(al)
     t.Logf("当前容量: %d", capacity)
 }
 
@@ -126,7 +146,7 @@ func TestArrayList_Clear(t *testing.T) {
     }
     for i := 0; i < len(al.elements); i++ {
         if al.elements[i] != nil {
-            t.Log(al.elements[i])
+            t.Skipf("al.elements[%d] = %v != nil", i, al.elements[i])
         }
     }
 }
