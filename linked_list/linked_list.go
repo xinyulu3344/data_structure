@@ -38,7 +38,6 @@ type LinkedList struct {
 }
 
 func NewLinkedList() *LinkedList {
-    list.New()
     return &LinkedList{}
 }
 
