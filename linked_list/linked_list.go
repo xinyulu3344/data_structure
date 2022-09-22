@@ -1,7 +1,6 @@
 package linked_list
 
 import (
-    "container/list"
     "fmt"
 )
 
