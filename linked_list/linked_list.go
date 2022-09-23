@@ -68,6 +68,7 @@ func (l *LinkedList) Set(index int, e E) E {
 }
 
 func (l *LinkedList) Add(index int, e E) {
+	l.rangeCheckForAdd(index)
     if index == 0 {
         l.root = &node{element: e, next: l.root}
     } else {
@@ -78,6 +79,7 @@ func (l *LinkedList) Add(index int, e E) {
 }
 
 func (l *LinkedList) Remove(index int) E {
+	l.rangeCheck(index)
     n := l.root
     if index == 0 {
         l.root = l.root.next
