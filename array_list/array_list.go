@@ -142,13 +142,13 @@ func (al *ArrayList) outOfBounds(index int) {
 
 func (al *ArrayList) rangeCheck(index int) {
     if index < 0 || index >= al.size {
-        panic(fmt.Sprintf("Index: %d Size: %d", index, al.size))
+		al.outOfBounds(index)
     }
 }
 
 func (al *ArrayList) rangeCheckForAdd(index int) {
     if index < 0 || index > al.size {
-        panic(fmt.Sprintf("Index: %d Size: %d", index, al.size))
+		al.outOfBounds(index)
     }
 }
 
