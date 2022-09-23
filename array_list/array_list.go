@@ -1,7 +1,7 @@
 package array_list
 
 import (
-    "fmt"
+	"fmt"
 )
 
 const (
@@ -93,6 +93,7 @@ func (al *ArrayList) Remove(index int) Item {
     }
     al.size--
     al.elements[al.size] = nil
+	al.trim()
     return old
 }
 
@@ -134,6 +135,20 @@ func (al *ArrayList) ensureCapacity(capacity int) {
         newElements[i] = al.elements[i]
     }
     al.elements = newElements
+}
+
+func (al *ArrayList) trim() {
+	oldCapacity := len(al.elements)
+	if al.size >= (oldCapacity >> 1) || oldCapacity <= DEFAULT_CAPACITY {
+		return
+	}
+	// 剩余空间还很多
+	newCapacity := oldCapacity >> 1
+	newElements := make([]Item, newCapacity)
+    for i := 0; i < al.size; i++ {
+        newElements[i] = al.elements[i]
+    }
+	al.elements = newElements
 }
 
 func (al *ArrayList) outOfBounds(index int) {
