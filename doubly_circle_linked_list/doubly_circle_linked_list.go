@@ -40,9 +40,10 @@ type ILinkedList interface {
 }
 
 type DoublyCircleLinkedList struct {
-    size int
-    last *node
-    root *node
+    size    int
+    current *node
+    last    *node
+    root    *node
 }
 
 func NewDoublyCircleLinkedList() *DoublyCircleLinkedList {
@@ -111,13 +112,14 @@ func (l *DoublyCircleLinkedList) Add(index int, e E) {
 func (l *DoublyCircleLinkedList) Remove(index int) E {
     l.rangeCheck(index)
     
-    n := l.root
-    
+    return l.removeByNode(l.getNodeByIndex(index))
+}
+
+func (l *DoublyCircleLinkedList) removeByNode(n *node) E {
     if l.size == 1 {
         l.root = nil
         l.last = nil
     } else {
-        n = l.getNodeByIndex(index)
         prev := n.prev
         next := n.next
         prev.next = next
@@ -154,6 +156,36 @@ func (l *DoublyCircleLinkedList) IndexOf(e E) int {
         }
     }
     return ELEMENT_NOT_FOUND
+}
+
+// 将current指向头结点
+func (l *DoublyCircleLinkedList) ResetCurrent() {
+    l.current = l.root
+}
+
+// current指向下一个节点，并返回下一个节点的值
+func (l *DoublyCircleLinkedList) Next() E {
+    if l.current == nil {
+        return nil
+    }
+    l.current = l.current.next
+    return l.current.element
+}
+
+// 删除current指向的节点，并让current指向下一个节点，返回删除节点的值
+func (l *DoublyCircleLinkedList) RemoveCurrent() E {
+    if l.current == nil {
+        return nil
+    }
+    next := l.current.next
+    e := l.removeByNode(l.current)
+    
+    if l.size == 0 {
+        l.current = nil
+    } else {
+        l.current = next
+    }
+    return e
 }
 
 func (l *DoublyCircleLinkedList) Clear() {
