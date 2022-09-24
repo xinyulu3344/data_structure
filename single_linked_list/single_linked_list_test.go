@@ -35,7 +35,7 @@ func (p Persion) Equal(j E) bool {
     return false
 }
 
-func TestLinkedList(t *testing.T) {
+func TestSingleLinkedList(t *testing.T) {
     list := NewSingleLinkedList()
     list.Append(Int(1))
     list.Append(Int(2))

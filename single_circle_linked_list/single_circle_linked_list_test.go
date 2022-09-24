@@ -35,7 +35,7 @@ func (p Persion) Equal(j E) bool {
     return false
 }
 
-func TestCircleLinkedList(t *testing.T) {
+func TestSingleCircleLinkedList(t *testing.T) {
     list := NewSingleCircleLinkedList()
     list.Append(Int(1))
     list.Append(Int(2))
@@ -67,7 +67,7 @@ func TestCircleLinkedList(t *testing.T) {
     }
 }
 
-func TestCircleLinkedList1(t *testing.T) {
+func TestSingleCircleLinkedList1(t *testing.T) {
     list := NewSingleCircleLinkedList()
     list.Append(Int(11))
     list.Append(Int(22))
