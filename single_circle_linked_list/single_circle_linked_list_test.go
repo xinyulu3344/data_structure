@@ -77,7 +77,27 @@ func TestCircleLinkedList1(t *testing.T) {
     list.Add(2, Int(66))           // [55, 11, 66, 22, 33, 44]
     list.Add(list.Size(), Int(77)) // [55, 11, 66, 22, 33, 44, 77]
     
-    list.Remove(0)
-    list.Remove(2)
-    list.Remove(list.Size() - 1)
+    list.Remove(0)               // [11, 66, 22, 33, 44, 77]
+    list.Remove(2)               // [11, 66, 33, 44, 77]
+    list.Remove(list.Size() - 1) // [11, 66, 33, 44]
+    
+    if list.IndexOf(Int(44)) != 3 {
+        t.Error(list)
+    }
+    if list.IndexOf(Int(22)) != ELEMENT_NOT_FOUND {
+        t.Error(list)
+    }
+    if !list.Contains(Int(33)) {
+        t.Error(list)
+    }
+    
+    if list.Get(0) != Int(11) {
+        t.Error(list)
+    }
+    if list.Get(1) != Int(66) {
+        t.Error(list)
+    }
+    if list.Get(list.Size()-1) != Int(44) {
+        t.Error(list)
+    }
 }
