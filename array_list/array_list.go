@@ -1,7 +1,7 @@
 package array_list
 
 import (
-	"fmt"
+    "fmt"
 )
 
 const (
@@ -93,7 +93,7 @@ func (al *ArrayList) Remove(index int) Item {
     }
     al.size--
     al.elements[al.size] = nil
-	al.trim()
+    al.trim()
     return old
 }
 
@@ -121,6 +121,9 @@ func (al *ArrayList) Clear() {
         al.elements[i] = nil
     }
     al.size = 0
+    if al.elements != nil && len(al.elements) > DEFAULT_CAPACITY {
+        al.elements = make([]Item, DEFAULT_CAPACITY)
+    }
 }
 
 func (al *ArrayList) ensureCapacity(capacity int) {
@@ -138,17 +141,17 @@ func (al *ArrayList) ensureCapacity(capacity int) {
 }
 
 func (al *ArrayList) trim() {
-	oldCapacity := len(al.elements)
-	if al.size >= (oldCapacity >> 1) || oldCapacity <= DEFAULT_CAPACITY {
-		return
-	}
-	// 剩余空间还很多
-	newCapacity := oldCapacity >> 1
-	newElements := make([]Item, newCapacity)
+    oldCapacity := len(al.elements)
+    if al.size >= (oldCapacity>>1) || oldCapacity <= DEFAULT_CAPACITY {
+        return
+    }
+    // 剩余空间还很多
+    newCapacity := oldCapacity >> 1
+    newElements := make([]Item, newCapacity)
     for i := 0; i < al.size; i++ {
         newElements[i] = al.elements[i]
     }
-	al.elements = newElements
+    al.elements = newElements
 }
 
 func (al *ArrayList) outOfBounds(index int) {
@@ -157,13 +160,13 @@ func (al *ArrayList) outOfBounds(index int) {
 
 func (al *ArrayList) rangeCheck(index int) {
     if index < 0 || index >= al.size {
-		al.outOfBounds(index)
+        al.outOfBounds(index)
     }
 }
 
 func (al *ArrayList) rangeCheckForAdd(index int) {
     if index < 0 || index > al.size {
-		al.outOfBounds(index)
+        al.outOfBounds(index)
     }
 }
 
