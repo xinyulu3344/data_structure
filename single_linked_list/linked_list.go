@@ -103,7 +103,7 @@ func (l *LinkedList) IndexOf(e E) int {
         }
     } else {
         for i := 0; i < l.size; i++ {
-            if n.element.Equal(n.element) {
+            if e.Equal(n.element) {
                 return i
             }
             n = n.next
