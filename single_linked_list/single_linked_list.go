@@ -31,43 +31,43 @@ type ILinkedList interface {
     Clear()
 }
 
-type LinkedList struct {
+type SingleLinkedList struct {
     size int
     root *node
 }
 
-func NewLinkedList() *LinkedList {
-    return &LinkedList{}
+func NewSingleLinkedList() *SingleLinkedList {
+    return &SingleLinkedList{}
 }
 
-func (l *LinkedList) Size() int {
+func (l *SingleLinkedList) Size() int {
     return l.size
 }
 
-func (l *LinkedList) IsEmpty() bool {
+func (l *SingleLinkedList) IsEmpty() bool {
     return l.size == 0
 }
 
-func (l *LinkedList) Contains(e E) bool {
+func (l *SingleLinkedList) Contains(e E) bool {
     return l.IndexOf(e) != ELEMENT_NOT_FOUND
 }
 
-func (l *LinkedList) Append(e E) {
+func (l *SingleLinkedList) Append(e E) {
     l.Add(l.size, e)
 }
 
-func (l *LinkedList) Get(index int) E {
+func (l *SingleLinkedList) Get(index int) E {
     return l.getNodeByIndex(index).element
 }
 
-func (l *LinkedList) Set(index int, e E) E {
+func (l *SingleLinkedList) Set(index int, e E) E {
     n := l.getNodeByIndex(index)
     old := n.element
     n.element = e
     return old
 }
 
-func (l *LinkedList) Add(index int, e E) {
+func (l *SingleLinkedList) Add(index int, e E) {
     l.rangeCheckForAdd(index)
     if index == 0 {
         l.root = &node{element: e, next: l.root}
@@ -78,7 +78,7 @@ func (l *LinkedList) Add(index int, e E) {
     l.size++
 }
 
-func (l *LinkedList) Remove(index int) E {
+func (l *SingleLinkedList) Remove(index int) E {
     l.rangeCheck(index)
     n := l.root
     if index == 0 {
@@ -92,7 +92,7 @@ func (l *LinkedList) Remove(index int) E {
     return n.element
 }
 
-func (l *LinkedList) IndexOf(e E) int {
+func (l *SingleLinkedList) IndexOf(e E) int {
     n := l.root
     if e == nil {
         for i := 0; i < l.size; i++ {
@@ -112,12 +112,12 @@ func (l *LinkedList) IndexOf(e E) int {
     return ELEMENT_NOT_FOUND
 }
 
-func (l *LinkedList) Clear() {
+func (l *SingleLinkedList) Clear() {
     l.size = 0
     l.root = nil
 }
 
-func (l *LinkedList) String() string {
+func (l *SingleLinkedList) String() string {
     alStr := "["
     n := l.root
     for i := 0; i < l.size; i++ {
@@ -131,7 +131,7 @@ func (l *LinkedList) String() string {
 }
 
 // 获取index位置对应的节点对象
-func (l *LinkedList) getNodeByIndex(index int) *node {
+func (l *SingleLinkedList) getNodeByIndex(index int) *node {
     l.rangeCheck(index)
     n := l.root
     for i := 0; i < index; i++ {
@@ -140,17 +140,17 @@ func (l *LinkedList) getNodeByIndex(index int) *node {
     return n
 }
 
-func (l *LinkedList) outOfBounds(index int) {
+func (l *SingleLinkedList) outOfBounds(index int) {
     panic(fmt.Sprintf("Index: %d Size: %d", index, l.size))
 }
 
-func (l *LinkedList) rangeCheck(index int) {
+func (l *SingleLinkedList) rangeCheck(index int) {
     if index < 0 || index >= l.size {
         l.outOfBounds(index)
     }
 }
 
-func (l *LinkedList) rangeCheckForAdd(index int) {
+func (l *SingleLinkedList) rangeCheckForAdd(index int) {
     if index < 0 || index > l.size {
         l.outOfBounds(index)
     }

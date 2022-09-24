@@ -36,7 +36,7 @@ func (p Persion) Equal(j E) bool {
 }
 
 func TestLinkedList(t *testing.T) {
-    list := NewLinkedList()
+    list := NewSingleLinkedList()
     list.Append(Int(1))
     list.Append(Int(2))
     list.Add(0, Int(3))

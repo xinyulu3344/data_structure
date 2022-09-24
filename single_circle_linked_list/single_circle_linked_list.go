@@ -30,43 +30,43 @@ type ILinkedList interface {
     Clear()
 }
 
-type CircleLinkedList struct {
+type SingleCircleLinkedList struct {
     size int
     root *node
 }
 
-func NewCircleLinkedList() *CircleLinkedList {
-    return &CircleLinkedList{}
+func NewSingleCircleLinkedList() *SingleCircleLinkedList {
+    return &SingleCircleLinkedList{}
 }
 
-func (l *CircleLinkedList) Size() int {
+func (l *SingleCircleLinkedList) Size() int {
     return l.size
 }
 
-func (l *CircleLinkedList) IsEmpty() bool {
+func (l *SingleCircleLinkedList) IsEmpty() bool {
     return l.size == 0
 }
 
-func (l *CircleLinkedList) Contains(e E) bool {
+func (l *SingleCircleLinkedList) Contains(e E) bool {
     return l.IndexOf(e) != ELEMENT_NOT_FOUND
 }
 
-func (l *CircleLinkedList) Append(e E) {
+func (l *SingleCircleLinkedList) Append(e E) {
     l.Add(l.size, e)
 }
 
-func (l *CircleLinkedList) Get(index int) E {
+func (l *SingleCircleLinkedList) Get(index int) E {
     return l.getNodeByIndex(index).element
 }
 
-func (l *CircleLinkedList) Set(index int, e E) E {
+func (l *SingleCircleLinkedList) Set(index int, e E) E {
     n := l.getNodeByIndex(index)
     old := n.element
     n.element = e
     return old
 }
 
-func (l *CircleLinkedList) Add(index int, e E) {
+func (l *SingleCircleLinkedList) Add(index int, e E) {
     l.rangeCheckForAdd(index)
     if index == 0 {
         l.root = &node{element: e, next: l.root}
@@ -85,7 +85,7 @@ func (l *CircleLinkedList) Add(index int, e E) {
     l.size++
 }
 
-func (l *CircleLinkedList) Remove(index int) E {
+func (l *SingleCircleLinkedList) Remove(index int) E {
     l.rangeCheck(index)
     n := l.root
     if index == 0 {
@@ -105,7 +105,7 @@ func (l *CircleLinkedList) Remove(index int) E {
     return n.element
 }
 
-func (l *CircleLinkedList) IndexOf(e E) int {
+func (l *SingleCircleLinkedList) IndexOf(e E) int {
     n := l.root
     if e == nil {
         for i := 0; i < l.size; i++ {
@@ -125,12 +125,12 @@ func (l *CircleLinkedList) IndexOf(e E) int {
     return ELEMENT_NOT_FOUND
 }
 
-func (l *CircleLinkedList) Clear() {
+func (l *SingleCircleLinkedList) Clear() {
     l.size = 0
     l.root = nil
 }
 
-func (l *CircleLinkedList) String() string {
+func (l *SingleCircleLinkedList) String() string {
     alStr := "["
     n := l.root
     for i := 0; i < l.size; i++ {
@@ -144,7 +144,7 @@ func (l *CircleLinkedList) String() string {
 }
 
 // 获取index位置对应的节点对象
-func (l *CircleLinkedList) getNodeByIndex(index int) *node {
+func (l *SingleCircleLinkedList) getNodeByIndex(index int) *node {
     l.rangeCheck(index)
     n := l.root
     for i := 0; i < index; i++ {
@@ -153,17 +153,17 @@ func (l *CircleLinkedList) getNodeByIndex(index int) *node {
     return n
 }
 
-func (l *CircleLinkedList) outOfBounds(index int) {
+func (l *SingleCircleLinkedList) outOfBounds(index int) {
     panic(fmt.Sprintf("Index: %d Size: %d", index, l.size))
 }
 
-func (l *CircleLinkedList) rangeCheck(index int) {
+func (l *SingleCircleLinkedList) rangeCheck(index int) {
     if index < 0 || index >= l.size {
         l.outOfBounds(index)
     }
 }
 
-func (l *CircleLinkedList) rangeCheckForAdd(index int) {
+func (l *SingleCircleLinkedList) rangeCheckForAdd(index int) {
     if index < 0 || index > l.size {
         l.outOfBounds(index)
     }
