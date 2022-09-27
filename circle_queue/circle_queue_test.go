@@ -8,18 +8,28 @@ func (i Int) Equal(j E) bool {
 	return i == j.(Int)
 }
 
-func TestCircleQueue(t *testing.T) {
+func testCircleQueue(t *testing.T, elements []Int) {
 	q := NewCircleQueue()
-	for i := 0; i < 10; i++ {
-		q.EnQueue(Int(i))
+	size := len(elements)
+	for _, v := range elements {
+		q.EnQueue(v)
 	}
-	t.Log(q.elements)
-	q.DeQueue()
-	t.Log(q.elements)
-	q.EnQueue(Int(88))
-	t.Log(q.elements)
-	for i := 0; i < 10; i++ {
+
+	if q.Size() != size {
+		t.Errorf("q.Size() == %v != %v", q.Size(), size)
+	}
+	if (q.Size() == 0 && !q.IsEmpty()) || (q.Size() > 0 && q.IsEmpty()) {
+		t.Errorf("q.Size() == %v but q.IsEmpty is %v\n", q.Size(), q.IsEmpty())
+	}
+	if q.Front() != elements[0] {
+		t.Errorf("q.Front() == %v != %v", q.Front(), elements[0])
+	}
+	for i := 0; i < size; i++ {
 		q.DeQueue()
 	}
-	t.Log(q.elements)
+	t.Log(q)
+}
+
+func TestCircleQueue(t *testing.T) {
+	testCircleQueue(t, []Int{0})
 }
