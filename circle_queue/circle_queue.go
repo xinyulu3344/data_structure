@@ -60,6 +60,14 @@ func (q *CircleQueue) Front() E {
 	return q.elements[q.front]
 }
 
+func (q *CircleQueue) Clear() {
+	for i := 0; i < q.size; i++ {
+		q.elements[q.index(i)] = nil
+	}
+	q.size = 0
+	q.front = 0
+}
+
 func (q *CircleQueue) String() string {
 	alStr := "["
 	for i := 0; i < len(q.elements); i++ {

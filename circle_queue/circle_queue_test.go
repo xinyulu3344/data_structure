@@ -27,7 +27,6 @@ func testCircleQueue(t *testing.T, elements []Int) {
 	for i := 0; i < size; i++ {
 		q.DeQueue()
 	}
-	t.Log(q)
 }
 
 func TestCircleQueue(t *testing.T) {
