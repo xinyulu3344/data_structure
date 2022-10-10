@@ -111,50 +111,59 @@ func (b *Bstree) Contains(e E) bool {
 }
 
 // 前序遍历
-func (b *Bstree) PreorderTraversal() {
-    b.preorderTraversal(b.root)
+func (b *Bstree) PreorderTraversal(visit Visit) {
+	if visit == nil {
+		return
+	}
+    b.preorderTraversal(b.root, visit)
 }
 
-func (b *Bstree) preorderTraversal(n *node) {
+func (b *Bstree) preorderTraversal(n *node, visit Visit) {
     if n == nil {
         return
     }
     fmt.Println(n.e)
-    b.preorderTraversal(n.left)
-    b.preorderTraversal(n.right)
+    b.preorderTraversal(n.left, visit)
+    b.preorderTraversal(n.right, visit)
 }
 
 // 中序遍历
-func (b *Bstree) InorderTraversal() {
-    b.inorderTraversal(b.root)
+func (b *Bstree) InorderTraversal(visit Visit) {
+	if visit == nil {
+		return
+	}
+    b.inorderTraversal(b.root, visit)
 }
 
-func (b *Bstree) inorderTraversal(n *node) {
+func (b *Bstree) inorderTraversal(n *node, visit Visit) {
     if n == nil {
         return
     }
-    b.inorderTraversal(n.left)
+    b.inorderTraversal(n.left, visit)
     fmt.Println(n.e)
-    b.inorderTraversal(n.right)
+    b.inorderTraversal(n.right, visit)
 }
 
 // 后序遍历
-func (b *Bstree) PostorderTraversal() {
-    b.postorderTraversal(b.root)
+func (b *Bstree) PostorderTraversal(visit Visit) {
+	if visit == nil {
+		return
+	}
+    b.postorderTraversal(b.root, visit)
 }
 
-func (b *Bstree) postorderTraversal(n *node) {
+func (b *Bstree) postorderTraversal(n *node, visit Visit) {
     if n == nil {
         return
     }
-    b.postorderTraversal(n.left)
-    b.postorderTraversal(n.right)
+    b.postorderTraversal(n.left, visit)
+    b.postorderTraversal(n.right, visit)
     fmt.Println(n.e)
 }
 
 // 层序遍历
-func (b *Bstree) LevelOrderTraversal() {
-    if b.root == nil {
+func (b *Bstree) LevelOrderTraversal(visit Visit) {
+    if b.root == nil || visit == nil {
         return
     }
     queue := make([]*node, 0)
@@ -163,7 +172,7 @@ func (b *Bstree) LevelOrderTraversal() {
 		// 出队
 		n := queue[0]
 		queue = queue[1:]
-		fmt.Println(n.e)
+		visit(n.e)
 		if n.left != nil {
 			queue = append(queue, n.left)
 		}

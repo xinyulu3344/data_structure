@@ -26,7 +26,7 @@ func TestBstree(t *testing.T) {
     data := []Int{7, 4, 2, 1, 3, 5, 9, 8, 11, 10, 12}
     
     bstree2 := NewBstreeWithComparator(func(e1, e2 E) int {
-		return int(e1.(Int) - e2.(Int))
+		return e1.(*Person).age - e2.(*Person).age
 	})
     for i := 0; i < len(data); i++ {
         bstree1.Add(data[i])
@@ -36,8 +36,12 @@ func TestBstree(t *testing.T) {
         })
     }
     
-    bstree1.PreorderTraversal()
-    bstree2.PreorderTraversal()
+    bstree1.PreorderTraversal(func(e E) {
+		fmt.Println(e)
+	})
+    bstree2.PreorderTraversal(func(e E) {
+		fmt.Println(e)
+	})
 }
 
 func TestBstree_InorderTraversal(t *testing.T) {
@@ -46,7 +50,9 @@ func TestBstree_InorderTraversal(t *testing.T) {
     for i := 0; i < len(data); i++ {
         bstree1.Add(data[i])
     }
-    bstree1.InorderTraversal()
+    bstree1.InorderTraversal(func(e E) {
+		fmt.Println(e)
+	})
 }
 
 func TestBstree_PostorderTraversal(t *testing.T) {
@@ -55,7 +61,9 @@ func TestBstree_PostorderTraversal(t *testing.T) {
     for i := 0; i < len(data); i++ {
         bstree1.Add(data[i])
     }
-    bstree1.PostorderTraversal()
+    bstree1.PostorderTraversal(func(e E) {
+		fmt.Println(e)
+	})
 }
 
 func TestBstree_LevelOrderTraversal(t *testing.T) {
@@ -64,5 +72,7 @@ func TestBstree_LevelOrderTraversal(t *testing.T) {
     for i := 0; i < len(data); i++ {
         bstree1.Add(data[i])
 	}
-    bstree1.LevelOrderTraversal()
+    bstree1.LevelOrderTraversal(func(e E) {
+		fmt.Println(e)
+	})
 }
