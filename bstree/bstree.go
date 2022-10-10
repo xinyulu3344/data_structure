@@ -41,14 +41,14 @@ func newNode(e E, parent *node) *node {
 type Bstree struct {
     size       int
     root       *node
-    comparator Comparator
+    comparator Compare
 }
 
 func NewBstree() *Bstree {
     return &Bstree{}
 }
 
-func NewBstreeWithComparator(comparator Comparator) *Bstree {
+func NewBstreeWithComparator(comparator Compare) *Bstree {
     return &Bstree{
         comparator: comparator,
     }
@@ -176,7 +176,7 @@ func (b *Bstree) LevelOrderTraversal() {
 
 func (b *Bstree) compare(e1, e2 E) int {
     if b.comparator != nil {
-        return b.comparator.Compare(e1, e2)
+        return b.comparator(e1, e2)
     }
     return e1.CompareTo(e2)
 }

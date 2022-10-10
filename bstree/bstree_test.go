@@ -14,11 +14,6 @@ func (p *Person) CompareTo(e E) int {
     return p.age - e.(*Person).age
 }
 
-type PersonComparator struct{}
-
-func (p *PersonComparator) Compare(e1 E, e2 E) int {
-    return e2.(*Person).age - e1.(*Person).age
-}
 
 type Int int
 
@@ -30,8 +25,9 @@ func TestBstree(t *testing.T) {
     bstree1 := NewBstree()
     data := []Int{7, 4, 2, 1, 3, 5, 9, 8, 11, 10, 12}
     
-    comparator := &PersonComparator{}
-    bstree2 := NewBstreeWithComparator(comparator)
+    bstree2 := NewBstreeWithComparator(func(e1, e2 E) int {
+		return int(e1.(Int) - e2.(Int))
+	})
     for i := 0; i < len(data); i++ {
         bstree1.Add(data[i])
         bstree2.Add(&Person{
