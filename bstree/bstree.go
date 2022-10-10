@@ -1,6 +1,8 @@
 package bstree
 
-import "fmt"
+import (
+	"fmt"
+)
 
 type IBst interface {
     // 获取元素的数量
@@ -158,11 +160,19 @@ func (b *Bstree) LevelOrderTraversal() {
     queue := make([]*node, 0)
     queue = append(queue, b.root)
     for len(queue) != 0 {
-    
+		// 出队
+		n := queue[0]
+		queue = queue[1:]
+		fmt.Println(n.e)
+		if n.left != nil {
+			queue = append(queue, n.left)
+		}
+		if n.right != nil {
+			queue = append(queue, n.right)
+		}
     }
 }
 
-func (b *Bstree) levelOrderTraversal() {}
 
 func (b *Bstree) compare(e1, e2 E) int {
     if b.comparator != nil {

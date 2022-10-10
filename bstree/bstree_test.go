@@ -28,7 +28,7 @@ func (i Int) CompareTo(e E) int {
 
 func TestBstree(t *testing.T) {
     bstree1 := NewBstree()
-    data := []Int{7, 4, 9, 2, 5, 8, 11, 3, 12, 1}
+    data := []Int{7, 4, 2, 1, 3, 5, 9, 8, 11, 10, 12}
     
     comparator := &PersonComparator{}
     bstree2 := NewBstreeWithComparator(comparator)
@@ -46,7 +46,7 @@ func TestBstree(t *testing.T) {
 
 func TestBstree_InorderTraversal(t *testing.T) {
     bstree1 := NewBstree()
-    data := []Int{7, 4, 9, 2, 5, 8, 11, 3, 12, 1}
+    data := []Int{7, 4, 2, 1, 3, 5, 9, 8, 11, 10, 12}
     for i := 0; i < len(data); i++ {
         bstree1.Add(data[i])
     }
@@ -55,9 +55,18 @@ func TestBstree_InorderTraversal(t *testing.T) {
 
 func TestBstree_PostorderTraversal(t *testing.T) {
     bstree1 := NewBstree()
-    data := []Int{7, 4, 9, 2, 5, 8, 11, 3, 12, 1}
+    data := []Int{7, 4, 2, 1, 3, 5, 9, 8, 11, 10, 12}
     for i := 0; i < len(data); i++ {
         bstree1.Add(data[i])
     }
     bstree1.PostorderTraversal()
+}
+
+func TestBstree_LevelOrderTraversal(t *testing.T) {
+    bstree1 := NewBstree()
+    data := []Int{7, 4, 2, 1, 3, 5, 9, 8, 11, 10, 12}
+    for i := 0; i < len(data); i++ {
+        bstree1.Add(data[i])
+	}
+    bstree1.LevelOrderTraversal()
 }
