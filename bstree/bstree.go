@@ -288,3 +288,46 @@ func (b *Bstree) elementNotNullCheck(e E) {
         panic("element must not be null")
     }
 }
+
+// 获取前驱结点
+func (b *Bstree) predecessor(n *node) *node {
+    if n == nil {
+        return nil
+    }
+    
+    // 如果左子树不为空, 遍历左子树的右子节点，找出最右子节点
+    p := n.left
+    if p != nil {
+        for p.right != nil {
+            p = p.right
+        }
+        return p
+    }
+    
+    // 从父节点、祖父节点...中寻找前驱结点
+    // 直到当前节点的父节点为空并且当前节点是父节点左子节点，返回当前节点的父节点
+    for n.parent != nil && n == n.parent.left {
+        n = n.parent
+    }
+    return n.parent
+}
+
+// 获取后继结点
+func (b *Bstree) getSuccessor(n *node) *node {
+    if n == nil {
+        return nil
+    }
+    p := n.right
+    if p != nil {
+        for p.left != nil {
+            p = p.left
+        }
+        return p
+    }
+    for n.parent != nil && n == n.parent.right {
+        n = n.parent
+    }
+    // 到这里，要么n是根节点，父节点为空，要么n是其父节点的右子节点
+    // n.parent == nil || n == n.parent.left
+    return n.parent
+}
