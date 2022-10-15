@@ -1,9 +1,5 @@
 package bstree
 
-import (
-    "fmt"
-)
-
 type IBst interface {
     // 获取元素的数量
     Size() int
@@ -108,9 +104,55 @@ func (b *Bstree) Add(e E) {
     b.size++
 }
 
+// Remove 删除元素
 func (b *Bstree) Remove(e E) {
-    //TODO implement me
-    panic("implement me")
+    b.remove(b.getNodeByElement(e))
+}
+
+// 删除节点
+func (b *Bstree) remove(n *node) {
+    if n == nil {
+        return
+    }
+    b.size--
+    // 删除度为2的节点
+    if n.hasTwoChildren() {
+        // 找到待删除节点的后继节点
+        s := b.successor(n)
+        // 用后继节点的值覆盖传入的n节点的值
+        n.e = s.e
+        // 让n指向后继节点，后续删除
+        n = s
+    }
+    
+    // 删除n节点，n的度必然为1或者0
+    var replacement *node
+    if n.left != nil {
+        replacement = n.left
+    } else if n.right != nil {
+        replacement = n.right
+    } else {
+        replacement = nil
+    }
+    
+    if replacement != nil { // n是度为1的节点
+        replacement.parent = n.parent
+        if n.parent == nil { // n是度为1的节点并且是根节点
+            b.root = replacement
+        } else if n == n.parent.left {
+            n.parent.left = replacement
+        } else {
+            n.parent.right = replacement
+        }
+    } else if n.parent == nil { // n是叶子节点并且是根节点
+        b.root = nil
+    } else { // n是叶子节点并且不是根节点
+        if n == n.parent.left {
+            n.parent.left = nil
+        } else {
+            n.parent.right = nil
+        }
+    }
 }
 
 func (b *Bstree) Contains(e E) bool {
@@ -130,7 +172,7 @@ func (b *Bstree) preorderTraversal(n *node, visit Visit) {
     if n == nil {
         return
     }
-    fmt.Println(n.e)
+    visit(n.e)
     b.preorderTraversal(n.left, visit)
     b.preorderTraversal(n.right, visit)
 }
@@ -148,7 +190,7 @@ func (b *Bstree) inorderTraversal(n *node, visit Visit) {
         return
     }
     b.inorderTraversal(n.left, visit)
-    fmt.Println(n.e)
+    visit(n.e)
     b.inorderTraversal(n.right, visit)
 }
 
@@ -166,7 +208,7 @@ func (b *Bstree) postorderTraversal(n *node, visit Visit) {
     }
     b.postorderTraversal(n.left, visit)
     b.postorderTraversal(n.right, visit)
-    fmt.Println(n.e)
+    visit(n.e)
 }
 
 // 层序遍历
@@ -330,4 +372,24 @@ func (b *Bstree) successor(n *node) *node {
     // 到这里，要么n是根节点，父节点为空，要么n是其父节点的右子节点
     // n.parent == nil || n == n.parent.left
     return n.parent
+}
+
+// 根据元素找到节点
+func (b *Bstree) getNodeByElement(e E) *node {
+    if e == nil {
+        return nil
+    }
+    n := b.root
+    for n != nil {
+        cmp := b.compare(e, n.e)
+        if cmp == 0 {
+            return n
+        }
+        if cmp > 0 {
+            n = n.right
+        } else {
+            n = n.left
+        }
+    }
+    return nil
 }
