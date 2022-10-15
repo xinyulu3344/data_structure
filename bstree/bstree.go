@@ -67,8 +67,8 @@ func (b *Bstree) IsEmpty() bool {
 }
 
 func (b *Bstree) Clear() {
-    //TODO implement me
-    panic("implement me")
+    b.root = nil
+    b.size = 0
 }
 
 func (b *Bstree) Add(e E) {
@@ -156,8 +156,7 @@ func (b *Bstree) remove(n *node) {
 }
 
 func (b *Bstree) Contains(e E) bool {
-    //TODO implement me
-    panic("implement me")
+    return b.getNodeByElement(e) != nil
 }
 
 // 前序遍历
