@@ -164,16 +164,20 @@ func (b *Bstree) PreorderTraversal(visit Visit) {
     if visit == nil {
         return
     }
-    b.preorderTraversal(b.root, visit)
+    stop := false
+    b.preorderTraversal(b.root, visit, &stop)
 }
 
-func (b *Bstree) preorderTraversal(n *node, visit Visit) {
-    if n == nil {
+func (b *Bstree) preorderTraversal(n *node, visit Visit, stop *bool) {
+    if n == nil || *stop {
         return
     }
-    visit(n.e)
-    b.preorderTraversal(n.left, visit)
-    b.preorderTraversal(n.right, visit)
+    if visit(n.e) {
+        *stop = true
+        return
+    }
+    b.preorderTraversal(n.left, visit, stop)
+    b.preorderTraversal(n.right, visit, stop)
 }
 
 // 中序遍历
@@ -181,16 +185,23 @@ func (b *Bstree) InorderTraversal(visit Visit) {
     if visit == nil {
         return
     }
-    b.inorderTraversal(b.root, visit)
+    stop := false
+    b.inorderTraversal(b.root, visit, &stop)
 }
 
-func (b *Bstree) inorderTraversal(n *node, visit Visit) {
-    if n == nil {
+func (b *Bstree) inorderTraversal(n *node, visit Visit, stop *bool) {
+    if n == nil || *stop {
         return
     }
-    b.inorderTraversal(n.left, visit)
-    visit(n.e)
-    b.inorderTraversal(n.right, visit)
+    b.inorderTraversal(n.left, visit, stop)
+    if *stop {
+        return
+    }
+    if visit(n.e) {
+        *stop = true
+        return
+    }
+    b.inorderTraversal(n.right, visit, stop)
 }
 
 // 后序遍历
@@ -198,16 +209,23 @@ func (b *Bstree) PostorderTraversal(visit Visit) {
     if visit == nil {
         return
     }
-    b.postorderTraversal(b.root, visit)
+    stop := false
+    b.postorderTraversal(b.root, visit, &stop)
 }
 
-func (b *Bstree) postorderTraversal(n *node, visit Visit) {
-    if n == nil {
+func (b *Bstree) postorderTraversal(n *node, visit Visit, stop *bool) {
+    if n == nil || *stop {
         return
     }
-    b.postorderTraversal(n.left, visit)
-    b.postorderTraversal(n.right, visit)
-    visit(n.e)
+    b.postorderTraversal(n.left, visit, stop)
+    b.postorderTraversal(n.right, visit, stop)
+    if *stop {
+        return
+    }
+    if visit(n.e) {
+        *stop = true
+        return
+    }
 }
 
 // 层序遍历
@@ -221,7 +239,9 @@ func (b *Bstree) LevelOrderTraversal(visit Visit) {
         // 出队
         n := queue[0]
         queue = queue[1:]
-        visit(n.e)
+        if visit(n.e) {
+            return
+        }
         if n.left != nil {
             queue = append(queue, n.left)
         }
