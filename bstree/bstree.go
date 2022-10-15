@@ -313,7 +313,7 @@ func (b *Bstree) predecessor(n *node) *node {
 }
 
 // 获取后继结点
-func (b *Bstree) getSuccessor(n *node) *node {
+func (b *Bstree) successor(n *node) *node {
     if n == nil {
         return nil
     }
