@@ -1,4 +1,4 @@
-package bstree
+package avl
 
 type E interface {
     CompareTo(e E) int

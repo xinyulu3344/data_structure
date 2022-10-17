@@ -1,4 +1,4 @@
-package bstree
+package avl
 
 type IAvl interface {
     // 获取元素的数量
@@ -51,7 +51,7 @@ func (a *avlNode) balanceFactor() int {
 }
 
 func (a *avlNode) updateHeight() {
-    a.height = max(a.getLeftHeight(), a.getRightHeight())
+    a.height = 1 + max(a.getLeftHeight(), a.getRightHeight())
 }
 
 func (a *avlNode) getLeftHeight() int {
@@ -153,15 +153,16 @@ func (a *AVLTree) Add(e E) {
             return
         }
     }
+	newNode := newAvlNode(e, parent)
     if cmp > 0 {
-        parent.right = newAvlNode(e, parent)
+        parent.right = newNode
     } else {
-        parent.left = newAvlNode(e, parent)
+        parent.left = newNode
     }
     a.size++
     
     // 新添加节点之后的处理
-    a.afterAdd(a.root)
+    a.afterAdd(newNode)
 }
 
 // Remove 删除元素
@@ -475,17 +476,19 @@ func (a *AVLTree) getNodeByElement(e E) *avlNode {
 
 // 添加节点后的处理
 func (a *AVLTree) afterAdd(n *avlNode) {
-    //
-    for n = n.parent; n != nil; {
-        if a.isBalanced(n) {
-            // 更新高度
-            a.updateHeight(n)
-        } else {
-            // 恢复平衡
-            a.rebalance(n)
-            // 整棵树恢复平衡
-            break
-        }
+    // 向上遍历父节点和祖先节点
+	// 如果节点平衡，就更新高度
+	// 如果节点不平衡，则恢复平衡，只需要处理高度最低的不平衡节点。
+	for n.parent != nil {
+        n = n.parent
+       if a.isBalanced(n) {
+           // 更新高度
+           a.updateHeight(n)
+       } else {
+           // 恢复平衡
+           a.rebalance(n)
+           break
+       }
     }
 }
 
@@ -530,4 +533,49 @@ func (a *AVLTree) rebalance(grand *avlNode) {
             a.rotateLeft(grand)
         }
     }
+}
+
+// 左旋
+func (a *AVLTree) rotateLeft(grand *avlNode) {
+	parent := grand.right
+	grand.right = parent.left
+	parent.left = grand
+
+	a.afterRotate(grand, parent, grand.right)
+}
+
+
+
+// 右旋
+func (a *AVLTree) rotateRight(grand *avlNode) {
+	parent := grand.left
+	grand.left = parent.right
+	parent.right = grand
+
+	a.afterRotate(grand, parent, grand.left)
+}
+
+// 旋转之后的维护操作
+func (a *AVLTree) afterRotate(grand, parent, child *avlNode) {
+    // 让parent成为子树的根节点
+    parent.parent = grand.parent
+    if grand.isLeftChild() {
+        grand.parent.left = parent
+    } else if grand.isRightChild() {
+        grand.parent.right = parent
+    } else { // grand是root节点
+        a.root = parent
+    }
+
+    // 更新child的parent
+    if child != nil {
+        child.parent = grand
+    }
+
+    // 更新grand的parent
+    grand.parent = parent
+
+    // 更新高度
+    a.updateHeight(grand)
+    a.updateHeight(parent)
 }
