@@ -205,14 +205,17 @@ func (a *AVLTree) remove(n *avlNode) {
         } else {
             n.parent.right = replacement
         }
+		a.afterRemove(n)
     } else if n.parent == nil { // n是叶子节点并且是根节点
         a.root = nil
+		a.afterRemove(n)
     } else { // n是叶子节点并且不是根节点
         if n == n.parent.left {
             n.parent.left = nil
         } else {
             n.parent.right = nil
         }
+		a.afterRemove(n)
     }
 }
 
@@ -578,4 +581,21 @@ func (a *AVLTree) afterRotate(grand, parent, child *avlNode) {
     // 更新高度
     a.updateHeight(grand)
     a.updateHeight(parent)
+}
+
+// 删除节点后的处理
+func (a *AVLTree) afterRemove(n *avlNode) {
+	// 向上遍历父节点和祖先节点
+    // 如果节点平衡，就更新高度
+    // 如果节点不平衡，则恢复平衡。由于恢复平衡后，可能会导致祖先节点不平衡，所以需要继续循环遍历祖先节点。
+    for n.parent != nil {
+        n = n.parent
+        if a.isBalanced(n) {
+           // 更新高度
+           a.updateHeight(n)
+       } else {
+           // 恢复平衡
+           a.rebalance(n)
+       }
+    }
 }

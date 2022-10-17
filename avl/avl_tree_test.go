@@ -17,7 +17,7 @@ func (i Int) CompareTo(e E) int {
     return int(i - e.(Int))
 }
 
-func TestXxx(t *testing.T) {
+func TestAdd(t *testing.T) {
 	avltree := NewAVLTree()
 	data := []Int{7, 4, 2, 1, 3, 9, 8, 11, 10, 12}
 
@@ -34,7 +34,40 @@ func TestXxx(t *testing.T) {
 				t.Log(e, n.height, n.parent.e, n.left.e, n.right.e)
 			}
 		} else {
-			t.Log(e, n.height, nil, n.left, n.right)
+			if n.left == nil || n.right == nil{
+				t.Log(e, n.height, nil, nil, nil)
+			} else {
+				t.Log(e, n.height, nil, n.left.e, n.right.e)
+			}
+		}
+		return false
+	})
+}
+
+func TestRemove(t *testing.T) {
+	avltree := NewAVLTree()
+	data := []Int{7, 4, 2, 1, 3, 9, 8, 11, 10, 12}
+
+	for _, v := range data {
+		avltree.Add(v)
+	}
+
+	avltree.Remove(data[1])
+
+	avltree.LevelOrderTraversal(func(e E) bool {
+		n := avltree.getNodeByElement(e)
+		if n.parent != nil {
+			if n.left == nil || n.right == nil{
+				t.Log(e, n.height, n.parent.e, nil, nil)
+			} else {
+				t.Log(e, n.height, n.parent.e, n.left.e, n.right.e)
+			}
+		} else {
+			if n.left == nil || n.right == nil{
+				t.Log(e, n.height, nil, nil, nil)
+			} else {
+				t.Log(e, n.height, nil, n.left.e, n.right.e)
+			}
 		}
 		return false
 	})
