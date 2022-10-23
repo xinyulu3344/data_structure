@@ -12,6 +12,14 @@ type rbNode struct {
 	color bool
 }
 
+func newRbNode(e E, parent *rbNode) *rbNode {
+    return &rbNode{
+        e:      e,
+        parent: parent,
+        color: red,
+    }
+}
+
 func (r *rbNode) isLeftChild() bool {
     return r.parent != nil && r == r.parent.left
 }
@@ -33,7 +41,7 @@ func (r *rbNode) sibling() *rbNode {
 
 type RBTree struct {
     size       int
-    root       *avlNode
+    root       *rbNode
     comparator Compare
 }
 
@@ -48,7 +56,96 @@ func NewRBTreeWithComparator(comparator Compare) *RBTree {
 }
 
 
-func (r *RBTree) afterAdd(n *rbNode) {}
+// Add添加元素
+func (r *RBTree) Add(e E) {
+    r.elementNotNullCheck(e)
+    
+    if r.root == nil { // 添加第一个节点
+        r.root = newRbNode(e, nil)
+        r.size++
+        
+        // 新添加节点之后的处理
+        r.afterAdd(r.root)
+        return
+    }
+    // 添加的不是第一个节点
+    // 找到父节点
+    parent := r.root // 保存添加节点的父节点
+    n := r.root
+    cmp := 0
+    for n != nil {
+        cmp = r.compare(e, n.e)
+        parent = n
+        if cmp > 0 {
+            n = n.right
+        } else if cmp < 0 {
+            n = n.left
+        } else {
+            n.e = e
+            return
+        }
+    }
+	newNode := newRbNode(e, parent)
+    if cmp > 0 {
+        parent.right = newNode
+    } else {
+        parent.left = newNode
+    }
+    r.size++
+    
+    // 新添加节点之后的处理
+    r.afterAdd(newNode)
+}
+
+
+func (r *RBTree) afterAdd(n *rbNode) {
+    parent := n.parent
+
+    if parent == nil { // 添加的是根节点或者上溢到达了根节点
+        r.dyeBlack(n) // 将根节点染黑
+        return
+    }
+
+    if r.isBlack(parent) { // 父节点是Black，直接返回
+        return
+    }
+
+    uncle := parent.sibling() // 叔父节点
+    grand := parent.parent // 祖父节点
+    if r.isRed(uncle) { // 叔父节点是Red
+        r.dyeBlack(parent)
+        r.dyeBlack(uncle)
+        // 把祖父节点当做是新添加的节点
+        r.dyeRed(grand)
+        r.afterAdd(grand)
+        return
+    }
+
+    // 叔父节点不是红色
+    if parent.isLeftChild() {
+        if n.isLeftChild() { // LL
+            r.dyeBlack(parent)
+            r.dyeRed(grand)
+            r.rotateRight(grand)
+        } else { // LR
+            r.dyeBlack(n)
+            r.dyeRed(grand)
+            r.rotateLeft(parent)
+            r.rotateRight(grand)
+        }
+    } else {                 // parent在grand的右边
+        if n.isLeftChild() { // RL
+            r.dyeBlack(n)
+            r.dyeRed(grand)
+            r.rotateRight(parent)
+            r.rotateLeft(grand)
+        } else { // RR
+            r.dyeBlack(parent)
+            r.dyeRed(grand)
+            r.rotateLeft(grand)
+        }
+    }
+}
 
 // 给节点染色
 func (r *RBTree) dyeColor(n *rbNode, color bool) *rbNode {
@@ -80,11 +177,87 @@ func (r *RBTree) colorOf(n *rbNode) bool {
 
 // 判断节点是否是黑色
 func (r *RBTree) isBlack(n *rbNode) bool {
-	return r.colorOf(n) == black
+    // return r.colorOf(n) == black
+    return r.colorOf(n)
 }
 
 
 // 判断节点是否是红色
 func (r *RBTree) isRed(n *rbNode) bool {
-	return r.colorOf(n) == red
+    // return r.colorOf(n) == red
+    return !r.colorOf(n)
+}
+
+func (r *RBTree) compare(e1, e2 E) int {
+    if r.comparator != nil {
+        return r.comparator(e1, e2)
+    }
+    return e1.CompareTo(e2)
+}
+
+func (r *RBTree) elementNotNullCheck(e E) {
+    if e == nil {
+        panic("element must not be null")
+    }
+}
+
+// 左旋
+func (r *RBTree) rotateLeft(grand *rbNode) {
+	parent := grand.right
+	grand.right = parent.left
+	parent.left = grand
+
+	r.afterRotate(grand, parent, grand.right)
+}
+
+
+
+// 右旋
+func (r *RBTree) rotateRight(grand *rbNode) {
+	parent := grand.left
+	grand.left = parent.right
+	parent.right = grand
+
+	r.afterRotate(grand, parent, grand.left)
+}
+
+// 旋转之后的维护操作
+func (r *RBTree) afterRotate(grand, parent, child *rbNode) {
+    // 让parent成为子树的根节点
+    parent.parent = grand.parent
+    if grand.isLeftChild() {
+        grand.parent.left = parent
+    } else if grand.isRightChild() {
+        grand.parent.right = parent
+    } else { // grand是root节点
+        r.root = parent
+    }
+
+    // 更新child的parent
+    if child != nil {
+        child.parent = grand
+    }
+
+    // 更新grand的parent
+    grand.parent = parent
+}
+
+// 根据元素找到节点
+func (r *RBTree) getNodeByElement(e E) *rbNode {
+    if e == nil {
+        return nil
+    }
+    n := r.root
+    for n != nil {
+        cmp := r.compare(e, n.e)
+        if cmp == 0 {
+            return n
+        }
+        if cmp > 0 {
+            n = n.right
+        } else {
+            n = n.left
+        }
+    }
+    return nil
 }
