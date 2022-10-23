@@ -39,6 +39,11 @@ func (r *rbNode) sibling() *rbNode {
     return nil
 }
 
+// 节点是否有两个子节点
+func (r *rbNode) hasTwoChildren() bool {
+    return r.left != nil && r.right != nil
+}
+
 type RBTree struct {
     size       int
     root       *rbNode
@@ -260,4 +265,169 @@ func (r *RBTree) getNodeByElement(e E) *rbNode {
         }
     }
     return nil
+}
+
+// Remove 删除元素
+func (r *RBTree) Remove(e E) {
+    r.remove(r.getNodeByElement(e))
+}
+
+// 删除节点
+func (r *RBTree) remove(n *rbNode) {
+    if n == nil {
+        return
+    }
+    r.size--
+    // 删除度为2的节点
+    if n.hasTwoChildren() {
+        // 找到待删除节点的后继节点
+        s := r.successor(n)
+        // 用后继节点的值覆盖传入的n节点的值
+        n.e = s.e
+        // 让n指向后继节点，后续删除
+        n = s
+    }
+    
+    // 删除n节点，n的度必然为1或者0
+    var replacement *rbNode
+    if n.left != nil {
+        replacement = n.left
+    } else if n.right != nil {
+        replacement = n.right
+    } else {
+        replacement = nil
+    }
+    
+    if replacement != nil { // n是度为1的节点
+        replacement.parent = n.parent
+        if n.parent == nil { // n是度为1的节点并且是根节点
+            r.root = replacement
+        } else if n == n.parent.left {
+            n.parent.left = replacement
+        } else {
+            n.parent.right = replacement
+        }
+		r.afterRemove(n, replacement)
+    } else if n.parent == nil { // n是叶子节点并且是根节点
+        r.root = nil
+		r.afterRemove(n, nil)
+    } else { // n是叶子节点并且不是根节点
+        if n == n.parent.left {
+            n.parent.left = nil
+        } else {
+            n.parent.right = nil
+        }
+		r.afterRemove(n, nil)
+    }
+}
+
+// 获取后继结点
+func (a *RBTree) successor(n *rbNode) *rbNode {
+    if n == nil {
+        return nil
+    }
+    p := n.right
+    if p != nil {
+        for p.left != nil {
+            p = p.left
+        }
+        return p
+    }
+    for n.parent != nil && n == n.parent.right {
+        n = n.parent
+    }
+    // 到这里，要么n是根节点，父节点为空，要么n是其父节点的右子节点
+    // n.parent == nil || n == n.parent.left
+    return n.parent
+}
+
+// 删除后的调整
+// n 被删除的节点
+func (r *RBTree) afterRemove(n *rbNode, replacement *rbNode) {
+    if r.isRed(n) { // 如果删除的节点是红色
+        return
+    }
+
+    if r.isRed(replacement) { // 用以取代n的子节点是红色
+        r.dyeBlack(replacement)
+        return
+    }
+
+    // 获取被删除节点的父节点
+    parent := n.parent
+    // 删除的是黑色叶子节点
+    if parent == nil { // 1. 删除的是根节点
+        return
+    }
+
+    // 判断被删除的n是parent的left还是right
+    left := (parent.left == nil) || n.isLeftChild()
+    var sibling *rbNode
+    if left {
+        sibling = parent.right
+    } else {
+        sibling = parent.left
+    }
+
+    if left { // 被删除的节点在左边
+        if r.isRed(sibling) { // 兄弟节点是Red，需要先转换为兄弟节点为Black
+            r.dyeBlack(sibling)
+            r.dyeRed(parent)
+            r.rotateLeft(parent)
+            // 更换sibling
+            sibling = parent.right
+        }
+
+        // 来到这里，sibling必然是Black
+        if r.isBlack(sibling.left) && r.isBlack(sibling.right) { // 兄弟节点没有Red子节点，父节点要向下和兄弟节点合并
+            // 判断父节点颜色
+            parentIsBlack := r.isBlack(parent)
+            r.dyeBlack(parent)
+            r.dyeRed(sibling)
+            if parentIsBlack { // 如果父节点是黑色，则父节点下来合并的时候，会导致父节点也下溢。
+                // 将父节点再当做被删除节点递归处理
+                r.afterRemove(parent, nil)
+            }
+
+        } else { // 兄弟节点至少有1个Red子节点
+            if r.isBlack(sibling.right) { // 兄弟右边是Black，符合LR条件，需要先对兄弟节点右旋转
+                r.rotateRight(sibling)
+                sibling = parent.right
+            }
+            r.dyeColor(sibling, r.colorOf(parent))
+            r.dyeBlack(sibling.right)
+            r.dyeBlack(parent)
+            r.rotateLeft(parent)
+        }
+    } else { // 被删除的节点在右边
+        if r.isRed(sibling) { // 兄弟节点是Red，需要先转换为兄弟节点为Black
+            r.dyeBlack(sibling)
+            r.dyeRed(parent)
+            r.rotateRight(parent)
+            // 更换sibling
+            sibling = parent.left
+        }
+
+        // 来到这里，sibling必然是Black
+        if r.isBlack(sibling.left) && r.isBlack(sibling.right) { // 兄弟节点没有Red子节点，父节点要向下和兄弟节点合并
+            // 判断父节点颜色
+            parentIsBlack := r.isBlack(parent)
+            r.dyeBlack(parent)
+            r.dyeRed(sibling)
+            if parentIsBlack { // 如果父节点是黑色，则父节点下来合并的时候，会导致父节点也下溢。
+                // 将父节点再当做被删除节点递归处理
+                r.afterRemove(parent, nil)
+            }
+
+        } else { // 兄弟节点至少有1个Red子节点
+            if r.isBlack(sibling.left) { // 兄弟左边是Black，符合LR条件，需要先对兄弟节点左旋转
+                r.rotateLeft(sibling)
+                sibling = parent.left
+            }
+            r.dyeColor(sibling, r.colorOf(parent))
+            r.dyeBlack(sibling.left)
+            r.dyeBlack(parent)
+            r.rotateRight(parent)
+        }
+    }
 }
