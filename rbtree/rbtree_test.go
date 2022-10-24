@@ -20,9 +20,9 @@ func TestAdd(t *testing.T) {
     for _, v := range data {
         n := rbtree.getNodeByElement(v)
         if n.color {
-            t.Log(n.e, "Black")
+            fmt.Printf("%v_%s " ,n.e, "黑")
         } else {
-            t.Log(n.e, "Red")
+            fmt.Printf("%v_%s ", n.e, "红")
         }
     }
 }
@@ -36,22 +36,23 @@ func TestRemove(t *testing.T) {
     for _, v := range data {
         n := rbtree.getNodeByElement(v)
         if n.color {
-            t.Log(n.e, "Black")
+            fmt.Printf("%v_%s " ,n.e, "黑")
         } else {
-            t.Log(n.e, "Red")
+            fmt.Printf("%v_%s ", n.e, "红")
         }
     }
-    fmt.Println("===")
+    fmt.Printf("\n")
     for i, v := range data {
         rbtree.Remove(v)
+        fmt.Printf("删除: %v => ", v)
         for j := i+1; j < len(data); j++ {
             n := rbtree.getNodeByElement(data[j])
             if n.color {
-                t.Log(n.e, "Black")
+                fmt.Printf("%v_%s " , n.e, "黑")
             } else {
-                t.Log(n.e, "Red")
+                fmt.Printf("%v_%s " ,n.e, "红")
             }
         }
-        fmt.Println("===")
+        fmt.Printf("\n")
     }
 }

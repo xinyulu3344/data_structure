@@ -307,17 +307,17 @@ func (r *RBTree) remove(n *rbNode) {
         } else {
             n.parent.right = replacement
         }
-		r.afterRemove(n, replacement)
+		r.afterRemove(replacement)
     } else if n.parent == nil { // n是叶子节点并且是根节点
         r.root = nil
-		r.afterRemove(n, nil)
+		r.afterRemove(n)
     } else { // n是叶子节点并且不是根节点
         if n == n.parent.left {
             n.parent.left = nil
         } else {
             n.parent.right = nil
         }
-		r.afterRemove(n, nil)
+		r.afterRemove(n)
     }
 }
 
@@ -342,14 +342,12 @@ func (a *RBTree) successor(n *rbNode) *rbNode {
 }
 
 // 删除后的调整
-// n 被删除的节点
-func (r *RBTree) afterRemove(n *rbNode, replacement *rbNode) {
-    if r.isRed(n) { // 如果删除的节点是红色
-        return
-    }
+// n 被删除的节点，或者用以取代被删除节点的子节点（当被删除节点的度为1）
+func (r *RBTree) afterRemove(n *rbNode) {
 
-    if r.isRed(replacement) { // 用以取代n的子节点是红色
-        r.dyeBlack(replacement)
+    
+    if r.isRed(n) { // 用以取代n的子节点是红色，或者用以取代删除节点的子节点是红色
+        r.dyeBlack(n)
         return
     }
 
@@ -386,7 +384,7 @@ func (r *RBTree) afterRemove(n *rbNode, replacement *rbNode) {
             r.dyeRed(sibling)
             if parentIsBlack { // 如果父节点是黑色，则父节点下来合并的时候，会导致父节点也下溢。
                 // 将父节点再当做被删除节点递归处理
-                r.afterRemove(parent, nil)
+                r.afterRemove(parent)
             }
 
         } else { // 兄弟节点至少有1个Red子节点
@@ -416,7 +414,7 @@ func (r *RBTree) afterRemove(n *rbNode, replacement *rbNode) {
             r.dyeRed(sibling)
             if parentIsBlack { // 如果父节点是黑色，则父节点下来合并的时候，会导致父节点也下溢。
                 // 将父节点再当做被删除节点递归处理
-                r.afterRemove(parent, nil)
+                r.afterRemove(parent)
             }
 
         } else { // 兄弟节点至少有1个Red子节点
