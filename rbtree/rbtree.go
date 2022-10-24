@@ -20,6 +20,10 @@ func newRbNode(e E, parent *rbNode) *rbNode {
     }
 }
 
+func (r *rbNode) isLeaf() bool {
+    return r.left == nil && r.right == nil
+}
+
 func (r *rbNode) isLeftChild() bool {
     return r.parent != nil && r == r.parent.left
 }
@@ -60,6 +64,200 @@ func NewRBTreeWithComparator(comparator Compare) *RBTree {
     }
 }
 
+func (r *RBTree) Size() int {
+    return r.size
+}
+
+func (r *RBTree) IsEmpty() bool {
+    return r.size == 0
+}
+
+func (r *RBTree) Clear() {
+    r.root = nil
+    r.size = 0
+}
+
+func (r *RBTree) Contains(e E) bool {
+    return r.getNodeByElement(e) != nil
+}
+
+// 前序遍历
+func (r *RBTree) PreorderTraversal(visit Visit) {
+    if visit == nil {
+        return
+    }
+    stop := false
+    r.preorderTraversal(r.root, visit, &stop)
+}
+
+func (r *RBTree) preorderTraversal(n *rbNode, visit Visit, stop *bool) {
+    if n == nil || *stop {
+        return
+    }
+    if visit(n.e) {
+        *stop = true
+        return
+    }
+    r.preorderTraversal(n.left, visit, stop)
+    r.preorderTraversal(n.right, visit, stop)
+}
+
+// 中序遍历
+func (r *RBTree) InorderTraversal(visit Visit) {
+    if visit == nil {
+        return
+    }
+    stop := false
+    r.inorderTraversal(r.root, visit, &stop)
+}
+
+func (r *RBTree) inorderTraversal(n *rbNode, visit Visit, stop *bool) {
+    if n == nil || *stop {
+        return
+    }
+    r.inorderTraversal(n.left, visit, stop)
+    if *stop {
+        return
+    }
+    if visit(n.e) {
+        *stop = true
+        return
+    }
+    r.inorderTraversal(n.right, visit, stop)
+}
+
+// 后序遍历
+func (r *RBTree) PostorderTraversal(visit Visit) {
+    if visit == nil {
+        return
+    }
+    stop := false
+    r.postorderTraversal(r.root, visit, &stop)
+}
+
+func (r *RBTree) postorderTraversal(n *rbNode, visit Visit, stop *bool) {
+    if n == nil || *stop {
+        return
+    }
+    r.postorderTraversal(n.left, visit, stop)
+    r.postorderTraversal(n.right, visit, stop)
+    if *stop {
+        return
+    }
+    if visit(n.e) {
+        *stop = true
+        return
+    }
+}
+
+// 层序遍历
+func (r *RBTree) LevelOrderTraversal(visit Visit) {
+    if r.root == nil || visit == nil {
+        return
+    }
+    queue := make([]*rbNode, 0)
+    queue = append(queue, r.root)
+    for len(queue) != 0 {
+        // 出队
+        n := queue[0]
+        queue = queue[1:]
+        if visit(n.e) {
+            return
+        }
+        if n.left != nil {
+            queue = append(queue, n.left)
+        }
+        if n.right != nil {
+            queue = append(queue, n.right)
+        }
+    }
+}
+
+// IsComplete 利用层序遍历判断是否是完全二叉树
+func (r *RBTree) IsComplete() bool {
+    if r.root == nil {
+        return false
+    }
+    queue := make([]*rbNode, 0)
+    queue = append(queue, r.root)
+    // 只要leaf被置为true，表示后面遍历的所有节点，都必须是叶子节点
+    leaf := false
+    for len(queue) != 0 {
+        n := queue[0]
+        queue = queue[1:]
+        
+        if leaf && !n.isLeaf() { // 如果该节点应该是叶子节点，但是发现它不是叶子节点，说明这棵树不是完全二叉树
+            return false
+        }
+        
+        if n.left != nil { // 如果左子节点非空，左子节点入队
+            queue = append(queue, n.left)
+        } else if n.right != nil { // 如果左子节点为空，右子节点非空，判断为非完全二叉树
+            return false
+        }
+        
+        if n.right != nil { // 如果右子节点非空，右子节点入队
+            queue = append(queue, n.right)
+        } else { // 意味着后面所有的节点都必须是叶子节点
+            leaf = true
+        }
+    }
+    return true
+}
+
+// Height 利用层序遍历计算二叉树高度
+func (r *RBTree) Height() int {
+    if r.root == nil {
+        return 0
+    }
+    
+    // 树的高度
+    height := 0
+    // 存储每一层的元素数量
+    levelSize := 1
+    
+    queue := make([]*rbNode, 0)
+    queue = append(queue, r.root)
+    for len(queue) != 0 {
+        // 出队
+        n := queue[0]
+        queue = queue[1:]
+        levelSize--
+        
+        if n.left != nil {
+            queue = append(queue, n.left)
+        }
+        if n.right != nil {
+            queue = append(queue, n.right)
+        }
+        if levelSize == 0 { // 意味着即将要访问下一层
+            levelSize = len(queue)
+            height++
+            
+        }
+    }
+    return height
+}
+
+// Height2 递归的方式获取二叉树高度
+func (r *RBTree) Height2() int {
+    return r.height(r.root)
+}
+
+func (r *RBTree) height(n *rbNode) int {
+    if n == nil {
+        return 0
+    }
+    return 1 + max(r.height(n.left), r.height(n.right))
+}
+
+func max(x, y int) int {
+    if x > y {
+        return x
+    } else {
+        return y
+    }
+}
 
 // Add添加元素
 func (r *RBTree) Add(e E) {

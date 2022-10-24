@@ -56,3 +56,20 @@ func TestRemove(t *testing.T) {
         fmt.Printf("\n")
     }
 }
+
+func TestLevelOrder(t *testing.T) {
+    rbtree := NewRBTree()
+    data := []Int{55, 87, 56, 74, 96, 22, 62, 20, 70, 68, 90, 50}
+    for _, v := range data {
+        rbtree.Add(v)
+    }
+    rbtree.LevelOrderTraversal(func(e E) bool {
+        n := rbtree.getNodeByElement(e)
+        if n.color {
+            fmt.Printf("%v_%s " , n.e, "黑")
+        } else {
+            fmt.Printf("%v_%s " ,n.e, "红")
+        }
+        return false
+    })
+}
