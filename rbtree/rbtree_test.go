@@ -1,8 +1,10 @@
 package rbtree
 
 import (
+	"data_structure/bstprint"
 	"fmt"
 	"testing"
+
 )
 
 type Int int
@@ -72,4 +74,53 @@ func TestLevelOrder(t *testing.T) {
         }
         return false
     })
+}
+
+type RBTreeInfo struct {
+    *RBTree
+}
+
+func NewRBTreeInfo() *RBTreeInfo {
+    return &RBTreeInfo{
+        RBTree: NewRBTree(),
+    }
+}
+
+func (r *RBTreeInfo) Root() any {
+    return r.root
+}
+
+func (r *RBTreeInfo) Left(n any) any {
+    var nilRbnode *rbNode
+    if n != nilRbnode {
+        return n.(*rbNode).left
+    }
+    return nil
+}
+
+func (r *RBTreeInfo) Right(n any) any {
+    var nilRbnode *rbNode
+    if n != nilRbnode {
+        return n.(*rbNode).right
+    }
+    return nil
+}
+
+func (r *RBTreeInfo) String(n any) any {
+    var nilRbnode *rbNode
+    if n != nilRbnode {
+        return n.(*rbNode).e
+    }
+    return nil
+}
+
+func TestPrint(t *testing.T) {
+    bstinfo := NewRBTreeInfo()
+    data := []Int{55, 87, 56, 74, 96, 22, 62, 20, 70, 68, 90, 50}
+    for _, v := range data {
+        bstinfo.Add(v)
+    }
+    var bstp bstprint.InorderPrinter
+    bstp.BinaryTreeInfo = bstinfo
+    fmt.Println(bstp.PrintString())
 }
