@@ -111,7 +111,7 @@ func (r *RBTreeInfo) String(n any) any {
     if n != nilRbnode {
         return n.(*rbNode).e
     }
-    return nil
+    return ""
 }
 
 func TestPrint(t *testing.T) {
