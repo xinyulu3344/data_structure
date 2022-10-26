@@ -91,17 +91,23 @@ func (r *RBTreeInfo) Root() any {
 }
 
 func (r *RBTreeInfo) Left(n any) any {
-    var nilRbnode *rbNode
-    if n != nilRbnode {
-        return n.(*rbNode).left
+    var nilRbNode *rbNode
+    if rbnode, ok := n.(*rbNode); ok {
+        if rbnode.left == nilRbNode {
+            return nil
+        }
+        return rbnode.left
     }
     return nil
 }
 
 func (r *RBTreeInfo) Right(n any) any {
-    var nilRbnode *rbNode
-    if n != nilRbnode {
-        return n.(*rbNode).right
+    var nilRbNode *rbNode
+    if rbnode, ok := n.(*rbNode); ok {
+        if rbnode.right == nilRbNode {
+            return nil
+        }
+        return rbnode.right
     }
     return nil
 }
