@@ -1,37 +1,37 @@
 package set
 
-type MapSet[T comparable] map[T]struct{}
+type MapSet map[E]struct{}
 
-func NewMapSet[T comparable]() MapSet[T] {
-	return make(MapSet[T])
+func NewMapSet() MapSet {
+	return make(MapSet)
 }
 
-func (ms *MapSet[T]) Size() int {
+func (ms *MapSet) Size() int {
 	return len(*ms)
 }
 
-func (ms *MapSet[T]) IsEmpty() bool {
+func (ms *MapSet) IsEmpty() bool {
 	return ms.Size() == 0
 }
 
-func (ms *MapSet[T]) Clear() {
-	*ms = NewMapSet[T]()
+func (ms *MapSet) Clear() {
+	*ms = NewMapSet()
 }
 
-func (ms *MapSet[T]) Contains(v T) bool {
+func (ms *MapSet) Contains(v E) bool {
 	_, ok := (*ms)[v]
 	return ok
 }
 
-func (ms *MapSet[T]) Add(v T) {
+func (ms *MapSet) Add(v E) {
 	(*ms)[v] = struct{}{}
 }
 
-func (ms *MapSet[T]) Remove(v T) {
+func (ms *MapSet) Remove(v E) {
 	delete(*ms, v)
 }
 
-func (ms *MapSet[T]) Traversal(v Visit[T]) {
+func (ms *MapSet) Traversal(v Visit) {
 	if v == nil {
 		return
 	}
