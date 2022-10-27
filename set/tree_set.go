@@ -11,6 +11,12 @@ func NewTreeSet() *TreeSet {
 	}
 }
 
+func NewTreeSetWithComparator(comparator Compare) *TreeSet {
+	return &TreeSet{
+		tree: NewRBTreeWithComparator(comparator),
+	}
+}
+
 func (ts *TreeSet) Size() int {
 	return ts.tree.Size()
 }
