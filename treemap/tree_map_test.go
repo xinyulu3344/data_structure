@@ -1,7 +1,6 @@
 package treemap
 
 import (
-	"fmt"
 	"testing"
 )
 
@@ -19,21 +18,49 @@ func (sk Str) CompareTo(key Key) int {
     }
 }
 
-func TestXxx(t *testing.T) {
+func TestTreeMap(t *testing.T) {
     tm := NewTreeMap()
     tm.Put(Str("aaa"), 11)
     tm.Put(Str("bbb"), 22)
     tm.Put(Str("aaa"), 33)
 
-    fmt.Printf("tm.ContainsKey(Str(\"aaa\")): %v\n", tm.ContainsKey(Str("aaa")))
+    if tm.Size() != 2 {
+        t.Errorf("tm.Size(): %v\n", tm.Size())
+    }
 
-    fmt.Printf("tm.ContainsValue(33): %v\n", tm.ContainsValue(33, func(v1, v2 any) bool {
+    if !tm.ContainsKey(Str("aaa")) {
+        t.Errorf("tm.ContainsKey(Str(\"aaa\")): %v\n", tm.ContainsKey(Str("aaa")))
+    }
+
+    containsValue := tm.ContainsValue(33, func(v1, v2 any) bool {
         if v1 == v2 {
             return true
         } else {
             return false
         }
-    }))
+    })
 
-    fmt.Printf("tm.Get(Str(\"aaa\")): %v\n", tm.Get(Str("aaa")))
+    if !containsValue {
+        t.Errorf("tm.ContainsValue(33): %v\n", containsValue)
+    }
+
+    if tm.Get(Str("aaa")) != 33 {
+        t.Errorf("tm.Get(Str(\"aaa\")): %v\n", tm.Get(Str("aaa")))
+    }
+
+    tm.Traversal(func(key Key, value any) bool {
+        t.Log(key, value)
+        return true
+    })
+
+    tm.Remove(Str("bbb"))
+    if tm.Get(Str("bbb")) != nil {
+        t.Errorf("tm.Get(Str(\"bbb\")): %v\n", tm.Get(Str("bbb")))
+    }
+
+    tm.Clear()
+
+    if !tm.IsEmpty() {
+        t.Errorf("tm.IsEmpty(): %v\n", tm.IsEmpty())
+    }
 }

@@ -12,10 +12,6 @@ type rbNode struct {
     color bool
 }
 
-func (r *rbNode) isLeaf() bool {
-    return r.left == nil && r.right == nil
-}
-
 func (r *rbNode) isLeftChild() bool {
     return r.parent != nil && r == r.parent.left
 }
@@ -265,14 +261,30 @@ func (tm *TreeMap) ContainsValue(value any, equals Equals) bool {
     return false
 }
 
-func (tm *TreeMap) Traversal(v Visit) {
-	panic("not implemented") // TODO: Implement
+// 遍历TreeMap
+func (tm *TreeMap) Traversal(visit Visit) {
+    if visit == nil {
+        return
+    }
+    stop := false
+    tm.traversal(tm.root, visit, &stop)
 }
 
-
-// 层序遍历
-func (tm *TreeMap) LevelOrderTraversal(value any) {
+func (tm *TreeMap) traversal(n *rbNode, visit Visit, stop *bool) {
+    if n == nil || *stop {
+        return
+    }
+    tm.traversal(n.left, visit, stop)
+    if *stop {
+        return
+    }
+    if visit(n.key, n.value) {
+        *stop = true
+        return
+    }
+    tm.traversal(n.right, visit, stop)
 }
+
 
 // 比较两个value是否相等
 func (tm *TreeMap) valEquals(v1, v2 any, equals Equals) bool {
