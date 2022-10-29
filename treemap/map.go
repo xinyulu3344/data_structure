@@ -19,3 +19,5 @@ type IMap interface {
 type Visit func(key Key, value any) bool
 
 type Compare func(k1, k2 Key) int
+
+type Equals func(v1, v2 any) bool

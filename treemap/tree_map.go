@@ -104,6 +104,7 @@ func (tm *TreeMap) Put(key Key, value any) {
             n = n.left
         } else {
             n.key = key
+            n.value = value
             return
         }
     }
@@ -241,7 +242,7 @@ func (tm *TreeMap) ContainsKey(key Key) bool {
     return tm.getNodeByElement(key) != nil
 }
 
-func (tm *TreeMap) ContainsValue(value any) bool {
+func (tm *TreeMap) ContainsValue(value any, equals Equals) bool {
     if tm.root == nil {
         return false
     }
@@ -251,7 +252,7 @@ func (tm *TreeMap) ContainsValue(value any) bool {
         // 出队
         n := queue[0]
         queue = queue[1:]
-        if tm.valEquals(value, n.value) {
+        if tm.valEquals(value, n.value, equals) {
             return true
         }
         if n.left != nil {
@@ -274,8 +275,8 @@ func (tm *TreeMap) LevelOrderTraversal(value any) {
 }
 
 // 比较两个value是否相等
-func (tm *TreeMap) valEquals(v1, v2 any) bool {
-    panic("") // todu
+func (tm *TreeMap) valEquals(v1, v2 any, equals Equals) bool {
+    return equals(v1, v2)
 }
 
 func (tm *TreeMap) elementNotNullCheck(key Key) {
