@@ -2,6 +2,7 @@ package hashmap
 
 type Key interface {
 	HashCode() int
+    Equals(key Key) bool
 }
 
 type IMap interface {
