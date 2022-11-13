@@ -458,6 +458,7 @@ func (hm *HashMap) remove(n *rbNode) any {
         replacement = nil
     }
     
+	// 获取红黑树所在的数组索引
     idx := hm.indexByNode(n)
     if replacement != nil { // n是度为1的节点
         replacement.parent = n.parent
