@@ -14,7 +14,7 @@ type IMap interface {
     Remove(key Key) any
     ContainsKey(key Key) bool
     ContainsValue(value any) bool
-    Traversal(v Visit)
+    Traversal(visit Visit)
 }
 
 type Visit func(key Key, value any) bool

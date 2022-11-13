@@ -186,8 +186,31 @@ func (hm *HashMap) valEquals(v1, v2 any, equals Equals) bool {
     return equals(v1, v2)
 }
 
-func (hm *HashMap) Traversal(v Visit) {
-	panic("not implemented") // TODO: Implement
+func (hm *HashMap) Traversal(visit Visit) {
+    if hm.size == 0 || visit == nil {
+        return
+    }
+    queue := make([]*rbNode, 0)
+    length := len(hm.table)
+    for i := 0; i < length; i++ {
+        if hm.table[i] == nil {
+            continue
+        }
+        queue = append(queue, hm.table[i])
+        for len(queue) != 0 {
+            n := queue[0]
+            queue = queue[1:]
+            if visit(n.key, n.value) {
+                return
+            }
+            if n.left != nil {
+                queue = append(queue, n.left)
+            }
+            if n.right != nil {
+                queue = append(queue, n.right)
+            }
+        }
+    }
 }
 
 // 根据Key生成对应的索引
