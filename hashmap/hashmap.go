@@ -153,8 +153,37 @@ func (hm *HashMap) ContainsKey(key Key) bool {
     return hm.getNodeByKey(key) != nil
 }
 
-func (hm *HashMap) ContainsValue(value any) bool {
-	panic("not implemented") // TODO: Implement
+func (hm *HashMap) ContainsValue(value any, equals Equals) bool {
+    if hm.size == 0 {
+        return false
+    }
+    length := len(hm.table)
+    queue := make([]*rbNode, 0)
+    for i := 0; i < length; i++ {
+        if hm.table[i] == nil {
+            continue
+        }
+        queue = append(queue, hm.table[i])
+        for len(queue) != 0 {
+            n := queue[0]
+            queue = queue[1:]
+            if hm.valEquals(value, n.value, equals) {
+                return true
+            }
+            if n.left != nil {
+                queue = append(queue, n.left)
+            }
+            if n.right != nil {
+                queue = append(queue, n.right)
+            }
+        }
+    }
+    return false
+}
+
+// 比较两个value是否相等
+func (hm *HashMap) valEquals(v1, v2 any, equals Equals) bool {
+    return equals(v1, v2)
 }
 
 func (hm *HashMap) Traversal(v Visit) {
