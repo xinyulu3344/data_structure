@@ -61,6 +61,7 @@ func newRbNode(key Key, value any, parent *rbNode) *rbNode {
 type HashMap struct {
 	size  int
 	table []*rbNode
+    comparator Compare
 }
 
 func NewHashMap() *HashMap {
@@ -107,14 +108,42 @@ func (hm *HashMap) Put(key Key, value any) {
 	n := root
 	cmp := 0
 	h1 := 0
+    k1 := key
 	if key == nil {
 		h1 = 0
 	} else {
 		h1 = key.HashCode()
 	}
+    var result *rbNode
 	for n != nil {
-		cmp = hm.compare(key, n.key, h1, n.hash)
 		parent = n
+        k2 := n.key
+        h2 := n.hash
+
+        if h1 > h2 {
+            cmp = 1
+        } else if h1 < h2 {
+            cmp = -1
+        } else if k1.Equals(k2) {
+            cmp = 0
+        } else if k1 != nil && k2 != nil && hm.comparator != nil{ 
+            cmp = hm.comparator(k1, k2)
+        } else { // 先扫描，然后再根据内存地址大小决定左右
+            if n.left != nil {
+                if result = hm.getNode(n.left, k1); result != nil {
+                    n = result
+                    cmp = 0
+                }
+            } else if n.right != nil{
+                if result = hm.getNode(n.right, k1); result != nil {
+                    n = result
+                    cmp = 0
+                }
+            } else {
+                
+            }
+        }
+
 		if cmp > 0 {
 			n = n.right
 		} else if cmp < 0 {
@@ -462,20 +491,55 @@ func (hm *HashMap) compare(k1, k2 Key, h1, h2 int) int {
 }
 
 func (hm *HashMap) getNodeByKey(key Key) *rbNode {
-    n := hm.table[hm.index(key)]
+    root := hm.table[hm.index(key)]
+    if root == nil {
+        return nil
+    } else {
+        return hm.getNode(root, key)
+    }
+}
+
+// 根据key查找Node
+// 1. 比较哈希值
+// 2. key是否Equals
+// 3. key是否具备可比较性
+// 4. 递归扫描红黑树
+func (hm *HashMap) getNode(n *rbNode, k1 Key) *rbNode {
     h1 := 0
-    if key != nil {
-        h1 = key.HashCode()
+    if k1 == nil {
+        h1 = 0
+    } else {
+        h1 = k1.HashCode()
     }
     for n != nil {
-        cmp := hm.compare(key, n.key, h1, n.hash)
-        if cmp == 0 {
-            return n
-        }
-        if cmp > 0 {
+        k2 := n.key
+        h2 := n.hash
+        // 比较哈希值
+        if h1 > h2 {
             n = n.right
-        } else if cmp < 0 {
+        } else if h1 < h2 {
             n = n.left
+        } else if k1.Equals(k2) {
+            return n
+        } else if k1 != nil && k2 != nil && hm.comparator != nil {
+            cmp := hm.comparator(k1, k2)
+            if cmp > 0 {
+                n = n.right
+            } else if cmp < 0 {
+                n = n.left
+            } else {
+                return n
+            }
+        } else if n.right != nil {
+            if result := hm.getNode(n.right, k1); result != nil {
+                return result
+            }
+        } else if n.left != nil {
+            if result := hm.getNode(n.left, k1); result != nil {
+                return result
+            }
+        } else {
+            return nil
         }
     }
     return nil
