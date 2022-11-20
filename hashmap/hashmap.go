@@ -8,6 +8,8 @@ import (
 const red bool = false
 const black bool = true
 const DEFAULT_CAPACITY = 1 << 4
+// 默认装填因子
+const DEFAULT_LOAD_FACTOR = 0.75
 
 type rbNode struct {
 	hash   int
@@ -50,11 +52,13 @@ func newRbNode(key Key, value any, parent *rbNode) *rbNode {
 		parent: parent,
 		color:  red,
 	}
+	var h int
 	if key == nil {
-		n.hash = 0
+		h = 0
 	} else {
-		n.hash = n.key.HashCode()
+		h = key.HashCode()
 	}
+	n.hash = h ^ (h >> 16)
 	return n
 }
 
@@ -68,6 +72,13 @@ func NewHashMap() *HashMap {
 	return &HashMap{
 		table: make([]*rbNode, DEFAULT_CAPACITY),
 	}
+}
+
+func NewHashMapWithComparator(comparator Compare) *HashMap {
+    return &HashMap{
+		table: make([]*rbNode, DEFAULT_CAPACITY),
+        comparator: comparator,
+    }
 }
 
 func (hm *HashMap) Size() int {
@@ -91,6 +102,7 @@ func (hm *HashMap) Clear() {
 }
 
 func (hm *HashMap) Put(key Key, value any) {
+	hm.resize()
 	idx := hm.index(key)
 	root := hm.table[idx]
 	if root == nil {
@@ -105,44 +117,47 @@ func (hm *HashMap) Put(key Key, value any) {
 	// 添加的不是第一个节点
 	// 找到父节点
 	parent := root // 保存添加节点的父节点
-	n := root
-	cmp := 0
-	h1 := 0
-    k1 := key
-	if key == nil {
-		h1 = 0
-	} else {
-		h1 = key.HashCode()
-	}
+	n := root // 保存遍历红黑树的游标，起始指向root
+	cmp := 0 // 保存比较结果
+    k1 := key // 将传入的key赋值给k1，增强可读性
+	h1 := hm.hash(k1) // 保存传入key的哈希值
     var result *rbNode
+	var searched bool // 用于扫描红黑树判断key是否存在时，保证只扫描一次
 	for n != nil {
 		parent = n
         k2 := n.key
         h2 := n.hash
-
-        if h1 > h2 {
+		tempCmp := 0 // 存储具有可比较性的key的比较的值。避免一个Equals不等的key，但是cmp为0的情况。
+		if hm.comparator != nil {
+			tempCmp = hm.comparator(k1, k2)
+		}
+		if h1 > h2 { // 先比较哈希值，哈希值大的，放在红黑树右边
             cmp = 1
-        } else if h1 < h2 {
+        } else if h1 < h2 { // 哈希值小的，放在红黑树左边
             cmp = -1
         } else if k1.Equals(k2) {
             cmp = 0
-        } else if k1 != nil && k2 != nil && hm.comparator != nil{ 
-            cmp = hm.comparator(k1, k2)
-        } else { // 先扫描，然后再根据内存地址大小决定左右
-            if n.left != nil {
+        } else if k1 != nil && k2 != nil && hm.comparator != nil && tempCmp != 0 { 
+			cmp = tempCmp
+        } else if searched { // key已经扫描了
+			cmp = hm.getMemAdd(&k1) - hm.getMemAdd(&k2)
+        } else { // searched == false，key还没有扫描。后面根据内存地址大小决定左右
+            if n.left != nil || n.right != nil { // 如果左边不空
                 if result = hm.getNode(n.left, k1); result != nil {
                     n = result
                     cmp = 0
-                }
-            } else if n.right != nil{
-                if result = hm.getNode(n.right, k1); result != nil {
+                } else if result = hm.getNode(n.right, k1); result != nil {
                     n = result
                     cmp = 0
+				}else {
+					searched = true
+					cmp = hm.getMemAdd(&k1) - hm.getMemAdd(&k2)
                 }
             } else {
-                
+				searched = true
+				cmp = hm.getMemAdd(&k1) - hm.getMemAdd(&k2)
             }
-        }
+		}
 
 		if cmp > 0 {
 			n = n.right
@@ -150,7 +165,7 @@ func (hm *HashMap) Put(key Key, value any) {
 			n = n.left
 		} else {
 			n.key = key
-			n.value = value
+			n.value = value 
 			return
 		}
 	}
@@ -244,15 +259,21 @@ func (hm *HashMap) Traversal(visit Visit) {
 
 // 根据Key生成对应的索引
 func (hm *HashMap) index(key Key) int {
+	return hm.hash(key) & (len(hm.table)-1)
+}
+
+// 获取节点的索引
+func (hm *HashMap) indexByNode(n *rbNode) int {
+	return n.hash & (len(hm.table)-1)
+}
+
+// 扰动计算
+func (hm *HashMap) hash(key Key) int {
 	if key == nil {
 		return 0
 	}
-	hash := key.HashCode()
-	return (hash ^ (hash>>16)) & (len(hm.table)-1)
-}
-
-func (hm *HashMap) indexByNode(n *rbNode) int {
-	return (n.hash ^ (n.hash>>16)) & (len(hm.table)-1)
+	h := key.HashCode()
+	return h ^ (h >> 16)
 }
 
 func (hm *HashMap) afterPut(n *rbNode) {
@@ -471,25 +492,6 @@ func (hm *HashMap) afterRotate(grand, parent, child *rbNode) {
 	grand.parent = parent
 }
 
-func (hm *HashMap) compare(k1, k2 Key, h1, h2 int) int {
-	// 比较哈希值
-	result := h1 - h2
-	if result != 0 {
-		return result
-	}
-	// 比较equals
-	if k1.Equals(k2) {
-		return 0
-	}
-	pk1 := &k1
-	pk2 := &k2
-    spk1 := fmt.Sprintf("%d", pk1)
-    spk2 := fmt.Sprintf("%d", pk2)
-    ipk1, _ := strconv.Atoi(spk1)
-    ipk2, _ := strconv.Atoi(spk2)
-    return ipk1 - ipk2
-}
-
 func (hm *HashMap) getNodeByKey(key Key) *rbNode {
     root := hm.table[hm.index(key)]
     if root == nil {
@@ -505,15 +507,16 @@ func (hm *HashMap) getNodeByKey(key Key) *rbNode {
 // 3. key是否具备可比较性
 // 4. 递归扫描红黑树
 func (hm *HashMap) getNode(n *rbNode, k1 Key) *rbNode {
-    h1 := 0
-    if k1 == nil {
-        h1 = 0
-    } else {
-        h1 = k1.HashCode()
-    }
+    h1 := hm.hash(k1)
+	cmp := 0
     for n != nil {
         k2 := n.key
         h2 := n.hash
+
+		if hm.comparator != nil {
+			cmp = hm.comparator(k1, k2)
+		}
+
         // 比较哈希值
         if h1 > h2 {
             n = n.right
@@ -521,25 +524,22 @@ func (hm *HashMap) getNode(n *rbNode, k1 Key) *rbNode {
             n = n.left
         } else if k1.Equals(k2) {
             return n
-        } else if k1 != nil && k2 != nil && hm.comparator != nil {
-            cmp := hm.comparator(k1, k2)
+        } else if k1 != nil && k2 != nil && hm.comparator != nil && cmp != 0 {
             if cmp > 0 {
                 n = n.right
-            } else if cmp < 0 {
-                n = n.left
             } else {
-                return n
-            }
-        } else if n.right != nil {
-            if result := hm.getNode(n.right, k1); result != nil {
-                return result
-            }
-        } else if n.left != nil {
-            if result := hm.getNode(n.left, k1); result != nil {
-                return result
+                n = n.left
             }
         } else {
-            return nil
+            if n.right != nil {
+                if result := hm.getNode(n.right, k1); result != nil {
+                    return result
+                } else {
+					n = n.left
+                }
+            } else {
+				n = n.left
+            }
         }
     }
     return nil
@@ -560,6 +560,7 @@ func (hm *HashMap) remove(n *rbNode) any {
         // 用后继节点的值覆盖传入的n节点的值
         n.key = s.key
         n.value = s.value
+		n.hash = s.hash
         // 让n指向后继节点，后续删除
         n = s
     }
@@ -619,4 +620,98 @@ func (hm *HashMap) successor(n *rbNode) *rbNode {
     // 到这里，要么n是根节点，父节点为空，要么n是其父节点的右子节点
     // n.parent == nil || n == n.parent.left
     return n.parent
+}
+
+func (hm *HashMap) getMemAdd(key *Key) int {
+	spk := fmt.Sprintf("%d", key)
+	ipk, _ := strconv.Atoi(spk)
+	return ipk
+}
+
+func (hm *HashMap) resize() {
+	if float32(hm.size) / float32(len(hm.table)) <= DEFAULT_LOAD_FACTOR {
+		return
+	}
+	oldTable := hm.table
+	hm.table = make([]*rbNode, len(hm.table) << 1)
+
+	length := len(oldTable)
+    queue := make([]*rbNode, 0)
+    for i := 0; i < length; i++ {
+        if oldTable[i] == nil {
+            continue
+        }
+        queue = append(queue, oldTable[i])
+        for len(queue) != 0 {
+            n := queue[0]
+            queue = queue[1:]
+            if n.left != nil {
+                queue = append(queue, n.left)
+            }
+            if n.right != nil {
+                queue = append(queue, n.right)
+            }
+			hm.moveNode(n)
+        }
+    }
+}
+
+func (hm *HashMap) moveNode(newNode *rbNode) {
+	// 重置
+	newNode.parent = nil
+	newNode.left = nil
+	newNode.right = nil
+	newNode.color = red
+
+	idx := hm.indexByNode(newNode)
+	root := hm.table[idx]
+	if root == nil {
+		root = newNode
+		hm.table[idx] = root
+		hm.afterPut(root)
+		return
+	}
+	// root != nil，hash冲突
+	// 添加新的节点到红黑树上
+	// 添加的不是第一个节点
+	// 找到父节点
+	parent := root // 保存添加节点的父节点
+	n := root // 保存遍历红黑树的游标，起始指向root
+	cmp := 0 // 保存比较结果
+    k1 := newNode.key // 将传入的key赋值给k1，增强可读性
+	h1 := newNode.hash // 保存传入key的哈希值
+	for n != nil {
+		parent = n
+        k2 := n.key
+        h2 := n.hash
+		tempCmp := 0 // 存储具有可比较性的key的比较的值。避免一个Equals不等的key，但是cmp为0的情况。
+		if hm.comparator != nil {
+			tempCmp = hm.comparator(k1, k2)
+		}
+		if h1 > h2 { // 先比较哈希值，哈希值大的，放在红黑树右边
+            cmp = 1
+        } else if h1 < h2 { // 哈希值小的，放在红黑树左边
+            cmp = -1
+        } else if k1 != nil && k2 != nil && hm.comparator != nil && tempCmp != 0 { 
+			cmp = tempCmp
+        } else {
+			cmp = hm.getMemAdd(&k1) - hm.getMemAdd(&k2)
+		}
+
+		if cmp > 0 {
+			n = n.right
+		} else if cmp < 0 {
+			n = n.left
+		}
+	}
+
+	newNode.parent = parent
+	if cmp > 0 {
+		parent.right = newNode
+	} else {
+		parent.left = newNode
+	}
+
+	// 新添加节点之后的处理
+	hm.afterPut(newNode)
 }
