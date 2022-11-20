@@ -12,7 +12,7 @@ type IMap interface {
 	Get(key Key) any
 	Remove(key Key) any
 	ContainsKey(key Key) bool
-	ContainsValue(value any) bool
+	ContainsValue(value any, equals Equals) bool
 	Traversal(v Visit)
 }
 
