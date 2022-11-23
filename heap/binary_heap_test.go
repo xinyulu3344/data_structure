@@ -75,6 +75,23 @@ func TestHeapify(t *testing.T) {
     }
 }
 
+func TestTopK(t *testing.T) {
+	data := []any{8,2,7,4,5,18,8,99,10}
+	// 构建小顶堆
+    heap := NewBinaryHeapWithComparator(func(e1, e2 any) int {
+        return e2.(int) - e1.(int)
+    })
+	k := 5
+	for i :=0 ;i < len(data); i++ {
+		if heap.size < k {
+			heap.Add(data[i])
+		} else if data[i].(int) > heap.Get().(int) {
+			heap.Replace(data[i])
+		} 
+	}
+	t.Log(heap.elements...)
+}
+
 func assert(t *testing.T, ok bool) {
     if !ok {
         debug.PrintStack()
