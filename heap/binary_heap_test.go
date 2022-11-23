@@ -1,8 +1,8 @@
 package heap
 
 import (
-	"runtime/debug"
-	"testing"
+    "runtime/debug"
+    "testing"
 )
 
 func TestAdd(t *testing.T) {
@@ -34,7 +34,7 @@ func TestRemove(t *testing.T) {
     assert(t, heap.Remove() == 90)
     assert(t, heap.Size() == 7)
     // t.Log(heap.elements) // [72 68 50 65 38 10 43 <nil> <nil> <nil>]
-    out := []any {72, 68, 50, 65, 38, 10, 43, nil, nil, nil}
+    out := []any{72, 68, 50, 65, 38, 10, 43, nil, nil, nil}
     for i := 0; i < heap.size; i++ {
         if out[i] != heap.elements[i] {
             assert(t, false)
@@ -62,9 +62,22 @@ func TestReplace(t *testing.T) {
     }
 }
 
+func TestHeapify(t *testing.T) {
+    data := []any{68, 72, 43, 50, 38, 10, 90, 65}
+    heap := NewBinaryHeapify(data, func(e1, e2 any) int {
+        return e1.(int) - e2.(int)
+    })
+    out := []any{90, 72, 68, 65, 38, 10, 43, 50}
+    for i := 0; i < heap.size; i++ {
+        if out[i] != heap.elements[i] {
+            assert(t, false)
+        }
+    }
+}
+
 func assert(t *testing.T, ok bool) {
     if !ok {
         debug.PrintStack()
-        t.Fail()
+        t.FailNow()
     }
 }

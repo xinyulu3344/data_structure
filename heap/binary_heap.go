@@ -25,6 +25,22 @@ func NewBinaryHeap() *BinaryHeap {
     }
 }
 
+func NewBinaryHeapify(elements []any, comparator Compare) *BinaryHeap {
+	if len(elements) == 0 {
+        bheap := NewBinaryHeapWithComparator(comparator)
+        return bheap
+    } else {
+        bheap := &BinaryHeap{
+            comparator: comparator,
+            elements: make([]any, max(len(elements), DEFAULT_CAPACITY)),
+            size: len(elements),
+        }
+        copy(bheap.elements, elements)
+        bheap.heapify()
+        return bheap
+    }
+}
+
 // 元素的数量
 func (bh *BinaryHeap) Size() int {
     return bh.size
@@ -176,4 +192,24 @@ func (bh *BinaryHeap) siftDown(index int) {
         index = childIndex 
     }
     bh.elements[index] = current
+}
+
+func (bh *BinaryHeap) heapify() {
+	// 自上而下的上滤
+	// for i := 1; i < bh.size; i++ {
+	// 	bh.siftUp(i)
+	// }
+
+	// 自下而上的下滤
+	for i := bh.size >> 1; i >=0; i-- {
+		bh.siftDown(i)
+	}
+}
+
+func max(x, y int) int {
+	if x > y {
+		return x
+	} else {
+		return y
+	}
 }
