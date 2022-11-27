@@ -134,7 +134,6 @@ func (t *Trie) Remove(key string) any {
             break
         }
         n = parent
-        parent = n.parent
     }
     return oldValue
 }
