@@ -203,6 +203,26 @@ func (b *Bstree) PreorderTraversalIter(visit Visit) {
 		}
 	}
 }
+func (b *Bstree) PreorderTraversalIter2(visit Visit) {
+	if visit == nil || b.root == nil {
+		return
+	}
+	stack := make([]*node, 0)
+    stack = append(stack, b.root)
+	for len(stack) != 0 {
+        n := stack[len(stack) - 1]
+        stack = stack[:len(stack) - 1]
+        if visit(n.e) {
+            return
+        }
+        if n.right != nil {
+            stack = append(stack, n.right)
+        }
+        if n.left != nil {
+            stack = append(stack, n.left)
+        }
+	}
+}
 
 // 中序遍历
 func (b *Bstree) InorderTraversal(visit Visit) {
@@ -228,6 +248,31 @@ func (b *Bstree) inorderTraversal(n *node, visit Visit, stop *bool) {
     b.inorderTraversal(n.right, visit, stop)
 }
 
+func (b *Bstree) InorderTraversalIter(visit Visit) {
+    if b.root == nil || visit == nil {
+        return
+    }
+
+    n := b.root
+    stack := make([]*node, 0)
+    for {
+        if n != nil {
+            stack = append(stack, n)
+            n = n.left
+        } else if len(stack) == 0 {
+            return
+        } else {
+            n = stack[len(stack) - 1]
+            stack = stack[:len(stack) - 1]
+            if visit(n.e) {
+                return
+            }
+            // 让右节点进行中序遍历
+            n = n.right
+        }
+    }
+}
+
 // 后序遍历
 func (b *Bstree) PostorderTraversal(visit Visit) {
     if visit == nil {
@@ -249,6 +294,33 @@ func (b *Bstree) postorderTraversal(n *node, visit Visit, stop *bool) {
     if visit(n.e) {
         *stop = true
         return
+    }
+}
+
+func (b *Bstree) PostorderTraversalIter(visit Visit) {
+    if visit == nil || b.root == nil {
+        return
+    }
+    // 记录上次弹出访问的节点
+    var prev *node
+    stack := make([]*node, 0)
+    stack = append(stack, b.root)
+    for len(stack) != 0 {
+        top := stack[len(stack) - 1]
+        if top.isLeaf() || (prev != nil && prev.parent == top) {
+            prev = stack[len(stack)-1]
+            stack = stack[:len(stack) - 1]
+            if visit(prev.e) {
+                return
+            }
+        } else {
+            if top.right != nil {
+                stack = append(stack, top.right)
+            }
+            if top.left != nil {
+                stack = append(stack, top.left)
+            }
+        }
     }
 }
 

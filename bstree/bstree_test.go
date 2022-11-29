@@ -209,6 +209,43 @@ func judgeBst(b *Bstree, preorderData []Int, inorderData []Int) bool {
 
 func TestPreorderTraversalIter(t *testing.T) {
 	bstree := NewBstree()
+    data := []Int{7, 4, 2, 1, 3, 9, 8, 11, 10, 12}
+    for _, v := range data {
+        bstree.Add(v)
+    }
+    bstree.PreorderTraversalIter(func(e E) bool {
+        fmt.Printf("%v ", e) // 7 4 2 1 3 9 8 11 10 12
+        return false
+    })
+    fmt.Println()
+    bstree.PreorderTraversalIter2(func(e E) bool {
+        fmt.Printf("%v ", e) // 7 4 2 1 3 9 8 11 10 12
+        return false
+    })
+}
+
+func TestInorderTraversalIter(t *testing.T) {
+	bstree := NewBstree()
+    data := []Int{7, 4, 2, 1, 3, 9, 8, 11, 10, 12}
+    for _, v := range data {
+        bstree.Add(v)
+    }
+    bstree.InorderTraversalIter(func(e E) bool {
+        fmt.Printf("%v ", e) // 1 2 3 4 7 8 9 10 11 12 
+        return false
+    })
+}
+
+func TestPostorderTraversalIter(t *testing.T) {
+    bstree := NewBstree()
+    data := []Int{7, 4, 2, 1, 3, 9, 8, 11, 10, 12}
+    for _, v := range data {
+        bstree.Add(v)
+    }
+    bstree.PostorderTraversalIter(func(e E) bool {
+        fmt.Printf("%v ", e) // 1 3 2 4 8 10 12 11 9 7
+        return false
+    })
 }
 
 func test(t *testing.T, result bool) {
