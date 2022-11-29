@@ -180,6 +180,30 @@ func (b *Bstree) preorderTraversal(n *node, visit Visit, stop *bool) {
     b.preorderTraversal(n.right, visit, stop)
 }
 
+func (b *Bstree) PreorderTraversalIter(visit Visit) {
+	if visit == nil || b.root == nil {
+		return
+	}
+	n := b.root
+	stack := make([]*node, 0)
+	for {
+		if n != nil {
+			if visit(n.e) {
+				return
+			}
+			if n.right != nil {
+				stack = append(stack, n.right)
+			}
+			n = n.left
+		} else if len(stack) == 0 {
+			return
+		} else {
+			n = stack[len(stack) - 1]
+			stack = stack[:len(stack) - 1]
+		}
+	}
+}
+
 // 中序遍历
 func (b *Bstree) InorderTraversal(visit Visit) {
     if visit == nil {

@@ -1,8 +1,9 @@
 package bstree
 
 import (
-    "fmt"
-    "testing"
+	"fmt"
+	"runtime/debug"
+	"testing"
 )
 
 type Person struct {
@@ -206,9 +207,14 @@ func judgeBst(b *Bstree, preorderData []Int, inorderData []Int) bool {
     return true
 }
 
+func TestPreorderTraversalIter(t *testing.T) {
+	bstree := NewBstree()
+}
+
 func test(t *testing.T, result bool) {
     if result {
         return
     }
+	debug.PrintStack()
     t.Fail()
 }
