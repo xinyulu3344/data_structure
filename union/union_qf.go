@@ -10,7 +10,7 @@ type UnionFindQF struct {
 	parents []int
 }
 
-func NewUnionFindQF(capacity int) IUnion {
+func NewUnionFindQF(capacity int) *UnionFindQF {
 	if capacity < 0 {
 		return &UnionFindQF{
 			parents: make([]int, 10, 10),

@@ -4,7 +4,7 @@ type UnionFindQU struct {
 	parents []int
 }
 
-func NewUnionFindQU(capacity int) IUnion {
+func NewUnionFindQU(capacity int) *UnionFindQU {
 	if capacity < 0 {
 		return &UnionFindQU{
 			parents: make([]int, 10, 10),

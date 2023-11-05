@@ -1,7 +1,10 @@
 package union
 
 import (
+	"fmt"
+	"math/rand"
 	"testing"
+	"time"
 )
 
 func TestUnionQF(t *testing.T) {
@@ -40,4 +43,28 @@ func TestUnionQU(t *testing.T) {
 	t.Log(uf.isSame(0, 6))
 	uf.Union(4, 6)
 	t.Log(uf.isSame(0, 6))
+}
+
+func TestUnionQUS(t *testing.T) {
+	count := 5000000
+	// uf1 := NewUnionFindQF(count)
+	// uf2 := NewUnionFindQU(count)
+	uf3 := NewUnionFindQUS(count)
+	uf4 := NewUnionFindQUR(count)
+	// testTime(count, uf1)
+	// testTime(count, uf2)
+	testTime(count, uf3)
+	testTime(count, uf4)
+}
+
+func testTime(count int, uf IUnion) {
+	start := time.Now()
+	for j := 0; j < count; j++ {
+		uf.Union(rand.Intn(count), rand.Intn(count))
+	}
+
+	for j := 0; j < count; j++ {
+		uf.isSame(rand.Intn(count), rand.Intn(count))
+	}
+	fmt.Println(time.Since(start))
 }
