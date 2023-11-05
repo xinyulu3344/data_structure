@@ -45,16 +45,26 @@ func TestUnionQU(t *testing.T) {
 	t.Log(uf.isSame(0, 6))
 }
 
-func TestUnionQUS(t *testing.T) {
+func TestUnion(t *testing.T) {
 	count := 5000000
 	// uf1 := NewUnionFindQF(count)
 	// uf2 := NewUnionFindQU(count)
 	uf3 := NewUnionFindQUS(count)
 	uf4 := NewUnionFindQUR(count)
+	uf5 := NewUnionFindQURPathComm(count)
+
+
+	// testRight(uf1)
+	// testRight(uf2)
+	testRight(uf3)
+	testRight(uf4)
+	testRight(uf5)
+
 	// testTime(count, uf1)
 	// testTime(count, uf2)
 	testTime(count, uf3)
 	testTime(count, uf4)
+	testTime(count, uf5)
 }
 
 func testTime(count int, uf IUnion) {
@@ -67,4 +77,22 @@ func testTime(count int, uf IUnion) {
 		uf.isSame(rand.Intn(count), rand.Intn(count))
 	}
 	fmt.Println(time.Since(start))
+}
+
+func testRight(uf IUnion) {
+	uf.Union(0, 1)
+	uf.Union(0, 3)
+	uf.Union(0, 4)
+	uf.Union(2, 3)
+	uf.Union(2, 5)
+
+	uf.Union(6, 7)
+
+	uf.Union(8, 10)
+	uf.Union(9, 10)
+	uf.Union(9, 11)
+
+	fmt.Printf("uf.isSame(0, 6): %v\n", uf.isSame(0, 6))
+	uf.Union(4, 6)
+	fmt.Printf("uf.isSame(0, 6): %v\n", uf.isSame(0, 6))
 }
