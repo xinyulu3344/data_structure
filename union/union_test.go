@@ -52,6 +52,8 @@ func TestUnion(t *testing.T) {
 	uf3 := NewUnionFindQUS(count)
 	uf4 := NewUnionFindQUR(count)
 	uf5 := NewUnionFindQURPathComm(count)
+	uf6 := NewUnionFindQURPathSplit(count)
+	uf7 := NewUnionFindQURPathHalv(count)
 
 
 	// testRight(uf1)
@@ -59,12 +61,16 @@ func TestUnion(t *testing.T) {
 	testRight(uf3)
 	testRight(uf4)
 	testRight(uf5)
+	testRight(uf6)
+	testRight(uf7)
 
 	// testTime(count, uf1)
 	// testTime(count, uf2)
 	testTime(count, uf3)
 	testTime(count, uf4)
 	testTime(count, uf5)
+	testTime(count, uf6)
+	testTime(count, uf7)
 }
 
 func testTime(count int, uf IUnion) {
