@@ -1,3 +1,3 @@
 module data_structure
 
-go 1.18
+go 1.21.3
